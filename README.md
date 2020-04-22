@@ -1,4 +1,5 @@
 # Ecommerce website
+## Giới thiệu
 - Trang web thương mại điện tử c2c về sách, sử dụng django 3.0.4 + mysql.
 ## Hướng dẫn cài đặt
 - Clone project.
