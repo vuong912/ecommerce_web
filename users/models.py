@@ -23,7 +23,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     fullname = models.CharField(max_length=256)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     date_joined = models.DateTimeField(default=timezone.now)
-    is_blocked = models.BooleanField(default=False)
+    blocked_date = models.DateTimeField(blank=True, null=True, default=None)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
