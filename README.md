@@ -8,8 +8,8 @@
 - Nếu sử dụng db trên localhost:3306 thì:
   - Cần đảm bảo đã cài đặt mysql trên máy.
   - Cần tồn tại account mysql có username là 'admin_ecom' và password là '7PSGzeDoq'.
-  - Cần tồn tại database ecommercedb.
-- Nếu đã có host riêng thì chỉ cần sửa biến DATABASES['default'] cho phù hợp.
+  - Chạy file init_ecommerce.sql.
+- Nếu đã có host riêng thì chỉ cần sửa biến DATABASES['default'] ở file settings.py cho phù hợp.
 
 - Sau khi đã đảm bảo database thì tiến hành migrate lần lượt bằng 2 lệnh sau:
 `python manage.py makemigrations`
