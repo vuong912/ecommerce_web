@@ -2,14 +2,6 @@ from django.db import models
 # Create your models here.
 
 ### USER
-class UserAddress(models.Model):
-    id_user = models.ForeignKey(User, models.DO_NOTHING, db_column='id_user')
-    id_address = models.ForeignKey(Address, models.DO_NOTHING, db_column='id_address')
-
-    class Meta:
-        managed = False
-        db_table = 'user_address'
-        unique_together = (('id_user', 'id_address'),)
 class EmailVerify(models.Model):
     id_user = models.OneToOneField('User', models.DO_NOTHING, db_column='id_user', primary_key=True)
     token = models.CharField(max_length=32)
@@ -34,6 +26,14 @@ class Address(models.Model):
     class Meta:
         managed = False
         db_table = 'address'
+class UserAddress(models.Model):
+    id_user = models.ForeignKey(User, models.DO_NOTHING, db_column='id_user')
+    id_address = models.ForeignKey(Address, models.DO_NOTHING, db_column='id_address')
+
+    class Meta:
+        managed = False
+        db_table = 'user_address'
+        unique_together = (('id_user', 'id_address'),)
 
 ### IMAGE
 class Image(models.Model):

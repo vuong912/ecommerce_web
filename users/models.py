@@ -28,8 +28,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-
+    def is_accepted_login(self):
+        return self.blocked_date == None
+    
     def __str__(self):
         return self.email
     class Meta:
         db_table = 'user'
+
+class EmailVerify(models.Model):
+    user = models.OneToOneField('User', models.DO_NOTHING, db_column='id_user', primary_key=True)
+    token = models.CharField(max_length=32)
+    verify_date = models.DateTimeField(blank=True, null=True)
+
+    def was_verified_email(self):
+        return self.verify_date != None
+    was_verified_email.boolean = True
+    was_verified_email.short_description = 'Đã xác thực email ?'
+
+    class Meta:
+        managed = False
+        db_table = 'email_verify'
