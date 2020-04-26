@@ -12,8 +12,6 @@ def user_login(request):
     form = LoginForm()
     if request.method == 'POST':
         form = LoginForm(request.POST)
-        print(request.POST['username'])
-        print(request.POST['password'])
         user = authenticate(request, username=request.POST['username'],password=request.POST['password'])
         
         if user and user.is_accepted_login():
@@ -47,7 +45,6 @@ def user_logout(request):
 @login_required 
 def user_email_verify(request, code):
     email_verify = EmailVerify.objects.get(user=request.user, token=code)
-    print(timezone.now())
     if email_verify and email_verify.verify_date == None:
         email_verify.verify_date = timezone.now()
         email_verify.save()
