@@ -167,7 +167,7 @@ CREATE TABLE `merchandise` (
     `quantity_exists` INT NOT NULL,
     `price` DECIMAL(13 , 4 ) NOT NULL,
     `origin_price` DECIMAL(13 , 4 ) NOT NULL,
-    `description` VARCHAR(512) NOT NULL,
+    `description` VARCHAR(5000) NOT NULL,
     `total_star` INT DEFAULT 0,
     `times_rated` INT DEFAULT 0,
     `stopped_date` DATETIME DEFAULT NULL,

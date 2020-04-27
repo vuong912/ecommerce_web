@@ -147,7 +147,7 @@ class Merchandise(models.Model):
     quantity_exists = models.IntegerField()
     price = models.DecimalField(max_digits=13, decimal_places=4)
     origin_price = models.DecimalField(max_digits=13, decimal_places=4)
-    description = models.CharField(max_length=512)
+    description = models.CharField(max_length=5000)
     total_star = models.IntegerField(blank=True, null=True)
     times_rated = models.IntegerField(blank=True, null=True)
     stopped_date = models.DateTimeField(blank=True, null=True)
