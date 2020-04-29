@@ -14,6 +14,7 @@ class EmailVerify(models.Model):
 ### ADDRESS
 class Address(models.Model):
     owner = models.CharField(max_length=256)
+    id_user = models.ForeignKey(User, models.DO_NOTHING, db_column='id_user')
     phone_number = models.CharField(max_length=15)
     no = models.CharField(max_length=32)
     street = models.CharField(max_length=64)
@@ -26,14 +27,6 @@ class Address(models.Model):
     class Meta:
         managed = False
         db_table = 'address'
-class UserAddress(models.Model):
-    id_user = models.ForeignKey(User, models.DO_NOTHING, db_column='id_user')
-    id_address = models.ForeignKey(Address, models.DO_NOTHING, db_column='id_address')
-
-    class Meta:
-        managed = False
-        db_table = 'user_address'
-        unique_together = (('id_user', 'id_address'),)
 
 ### IMAGE
 class Image(models.Model):
@@ -76,7 +69,6 @@ class Store(models.Model):
 
 ### BOOK
 class Book(models.Model):
-    id_category = models.ForeignKey('BookCategory', models.DO_NOTHING, db_column='id_category')
     name = models.CharField(max_length=256)
     publisher = models.CharField(max_length=256)
     publication_date = models.DateField()
@@ -99,6 +91,14 @@ class BookCategory(models.Model):
     class Meta:
         managed = False
         db_table = 'book_category'
+class BookCategoryDetail(models.Model):
+    id_book = models.ForeignKey(Book, models.DO_NOTHING, db_column='id_book')
+    id_category = models.ForeignKey(BookCategory, models.DO_NOTHING, db_column='id_category')
+
+    class Meta:
+        managed = False
+        db_table = 'book_category_detail'
+        unique_together = (('id_book', 'id_category'),)
 
 ### CART
 class Cart(models.Model):
@@ -147,7 +147,7 @@ class Merchandise(models.Model):
     quantity_exists = models.IntegerField()
     price = models.DecimalField(max_digits=13, decimal_places=4)
     origin_price = models.DecimalField(max_digits=13, decimal_places=4)
-    description = models.CharField(max_length=5000)
+    description = models.TextField()
     total_star = models.IntegerField(blank=True, null=True)
     times_rated = models.IntegerField(blank=True, null=True)
     stopped_date = models.DateTimeField(blank=True, null=True)

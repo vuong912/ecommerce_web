@@ -49,3 +49,19 @@ class EmailVerify(models.Model):
     class Meta:
         managed = False
         db_table = 'email_verify'
+
+class Address(models.Model):
+    owner = models.CharField(max_length=256)
+    user = models.ForeignKey(User, models.DO_NOTHING, db_column='id_user')
+    phone_number = models.CharField(max_length=15)
+    no = models.CharField(max_length=32)
+    street = models.CharField(max_length=64)
+    ward = models.CharField(max_length=64)
+    district = models.CharField(max_length=64)
+    city = models.CharField(max_length=64)
+    created_date = models.DateTimeField()
+    delete_date = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'address'

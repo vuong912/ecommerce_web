@@ -41,6 +41,7 @@ CREATE TABLE `manager` (
 
 CREATE TABLE `address` (
     `id` INT AUTO_INCREMENT,
+    `id_user` INT NOT NULL,
     `owner` VARCHAR(256) NOT NULL,
     `phone_number` VARCHAR(15) NOT NULL,
     `no` VARCHAR(32) NOT NULL,
@@ -52,17 +53,8 @@ CREATE TABLE `address` (
     `created_date` DATETIME NOT NULL,
     `delete_date` DATETIME DEFAULT NULL,
     PRIMARY KEY(`id`),
-    KEY (`city`)
-);
-
-CREATE TABLE `user_address`(
-	`id` INT AUTO_INCREMENT,
-	`id_user` INT NOT NULL,
-    `id_address` INT NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE (`id_user`, `id_address`),
-    CONSTRAINT `fk_address_user` FOREIGN KEY (`id_address`) REFERENCES `address` (`id`),
-    CONSTRAINT `fk_user_address` FOREIGN KEY (`id_user`) REFERENCES `user` (`id`)
+    KEY (`city`),
+    KEY (`id_user`)
 );
 
 CREATE TABLE `book_category` (
@@ -84,7 +76,7 @@ ALTER TABLE `book_category` ADD CONSTRAINT `fk_bookcategory` FOREIGN KEY (`id_pa
 
 CREATE TABLE `book` (
     `id` INT AUTO_INCREMENT,
-    `id_category` INT NOT NULL,
+    #`id_category` INT NOT NULL,
     `name` VARCHAR(256) NOT NULL,
     `publisher` VARCHAR(256) NOT NULL,
     `publication_date` DATE NOT NULL,
@@ -93,9 +85,19 @@ CREATE TABLE `book` (
     `length` SMALLINT NOT NULL,
     `pages_num` SMALLINT NOT NULL,
     PRIMARY KEY(`id`),
-    KEY(`id_category`),
-    CONSTRAINT `fk_book_bookcategory` FOREIGN KEY (`id_category`) REFERENCES `book_category` (`id`),
+    #KEY(`id_category`),
+    #CONSTRAINT `fk_book_bookcategory` FOREIGN KEY (`id_category`) REFERENCES `book_category` (`id`),
     CHECK (`width` > 0 AND `height` > 0 AND `length` > 0 AND `pages_num` > 0) 
+);
+
+CREATE TABLE `book_category_detail`(
+	`id` INT AUTO_INCREMENT,
+    `id_book` INT NOT NULL,
+    `id_category` INT NOT NULL,
+    PRIMARY KEY(`id`),
+    UNIQUE(`id_book`, `id_category`),
+    CONSTRAINT `fk_book_bookcategory` FOREIGN KEY (`id_category`) REFERENCES `book_category` (`id`),
+    CONSTRAINT `fk_bookcategory_book` FOREIGN KEY (`id_book`) REFERENCES `book` (`id`)
 );
 
 CREATE TABLE `store` (
@@ -167,7 +169,7 @@ CREATE TABLE `merchandise` (
     `quantity_exists` INT NOT NULL,
     `price` DECIMAL(13 , 4 ) NOT NULL,
     `origin_price` DECIMAL(13 , 4 ) NOT NULL,
-    `description` VARCHAR(5000) NOT NULL,
+    `description` TEXT NOT NULL,
     `total_star` INT DEFAULT 0,
     `times_rated` INT DEFAULT 0,
     `stopped_date` DATETIME DEFAULT NULL,

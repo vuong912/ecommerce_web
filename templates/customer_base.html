@@ -11,7 +11,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Book Market</title>
 
-    <!-- FAVICON -->
+    <link rel="icon" href="{% static 'img/Fevicon.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'vendors/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/themify-icons/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/linericon/style.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/owl-carousel/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/nice-select/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/nouislider/nouislider.min.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/style - Copy.css' %}">
+
     <link href="{% static 'img/favicon.png' %}" rel="shortcut icon">
     <!-- PLUGINS CSS STYLE -->
     <!-- <link href="plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet"> -->
@@ -37,7 +48,7 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
     <style>
-        .errorlist>li{
+        .errorlist>li {
             color: rgb(207, 29, 29);
             font-size: 0.7em;
         }
@@ -177,7 +188,8 @@
     </script>
     <script src="{% static 'plugins/google-map/gmap.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
-
+    {% block js %}
+    {% endblock %}
 </body>
 
 </html>
