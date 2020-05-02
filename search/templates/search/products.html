@@ -28,6 +28,14 @@
 <section class="section-sm">
     <div class="container">
         <div class="row">
+            <div class="col-md-12">
+                <div class="search-result bg-gray">
+                    <h2>Results For "Electronics"</h2>
+                    <p>123 Results on 12 December, 2017</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-3">
                 <div class="category-sidebar">
                     {% if current_category %}
@@ -90,12 +98,12 @@
                                     value="{% query_url 'sort' 'newest' request.GET.urlencode %}">Hàng mới</option>
                                 <option {%if sorted == 'hotest'%}selected{%endif%}
                                     value="{% query_url 'sort' 'hotest' request.GET.urlencode %}">Bán chạy</option>
-                                <option {%if sorted == 'appreciated'%}selected{%endif%}
-                                    value="{% query_url 'sort' 'appreciated' request.GET.urlencode %}">Đánh giá cao</option>
-                                <option {%if sorted == 'highest_price'%}selected{%endif%}
-                                    value="{% query_url 'sort' 'highest_price' request.GET.urlencode %}">Giá cao</option>
                                 <option {%if sorted == 'lowest_price'%}selected{%endif%}
-                                    value="{% query_url 'sort' 'lowest_price' request.GET.urlencode %}">Giá thấp</option>
+                                    value="{% query_url 'sort' 'lowest_price' request.GET.urlencode %}">Giá thấp
+                                </option>
+                                <option {%if sorted == 'highest_price'%}selected{%endif%}
+                                    value="{% query_url 'sort' 'highest_price' request.GET.urlencode %}">Giá cao
+                                </option>
                             </select>
                             {% endwith%}
                         </div>
@@ -120,8 +128,8 @@
                                                 href="{% url 'book:get_book' book.id %}">{{ book.name }}</a></h4>
                                         <ul class="list-inline product-meta">
                                             <li class="list-inline-item">
-                                                <a href="{% url 'book:get_book' book.id %}"><i class="fas fa-book"></i>
-                                                    {{ book.category }}</a>
+                                                <a href="{% url 'book:get_book' book.id %}"><i
+                                                        class="fa fa-folder-open-o"></i>{{ book.category }}</a>
                                             </li>
                                         </ul>
                                         <div class="price">
