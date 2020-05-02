@@ -133,6 +133,13 @@ class Merchandise(models.Model):
     
     def get_saving_rate(self):
         return (1 - self.price / self.origin_price) * 100
+    @staticmethod
+    def check_selling_raw_query():
+        return ['`merchandise`.`blocked_date` IS NULL',
+            '`merchandise`.`stopped_date` IS NULL',' `merchandise`.`activated_date` IS NOT NULL']
+    @staticmethod
+    def check_book_raw_query():
+        return ['`merchandise_portfolio`.`code` = "book"']
 
 
 class MerchandiseDelivery(models.Model):

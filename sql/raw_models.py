@@ -60,8 +60,7 @@ class Store(models.Model):
     times_rated = models.IntegerField(blank=True, null=True)
     closed_date = models.DateTimeField(blank=True, null=True)
     blocked_date = models.DateTimeField(blank=True, null=True)
-    activated_date = models.DateTimeField(blank=True, null=True)
-    activated_by = models.ForeignKey('User', models.DO_NOTHING, db_column='activated_by', blank=True, null=True)
+    point = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -241,7 +240,7 @@ class DetailOrder(models.Model):
     id_promotion = models.ForeignKey('Promotion', models.DO_NOTHING, db_column='id_promotion', blank=True, null=True)
     quantity = models.IntegerField()
     total_price = models.DecimalField(max_digits=13, decimal_places=4)
-    total_price_alter_discount = models.DecimalField(max_digits=13, decimal_places=4)
+    total_price_after_discount = models.DecimalField(max_digits=13, decimal_places=4)
 
     class Meta:
         managed = False

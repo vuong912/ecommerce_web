@@ -109,14 +109,12 @@ CREATE TABLE `store` (
     `total_star` INT DEFAULT 0,
     `times_rated` INT DEFAULT 0,
     `closed_date` DATETIME DEFAULT NULL,
+    `point` INT DEFAULT 0 NOT NULL,
     
     `blocked_date` DATETIME DEFAULT NULL,
-    `activated_date` DATETIME DEFAULT NULL,
-    `activated_by` INT DEFAULT NULL,
     PRIMARY KEY (`id_user`),
     UNIQUE(`phone_number`),
-    CHECK(`total_star` >= 0 AND `times_rated` >= 0),
-    CONSTRAINT `fk_actstore` FOREIGN KEY (`activated_by`) REFERENCES `user` (`id`)
+    CHECK(`total_star` >= 0 AND `times_rated` >= 0)
 );
 
 CREATE TABLE `delivery` (
@@ -365,7 +363,7 @@ CREATE TABLE `detail_order` (
     `id_promotion` INT DEFAULT NULL,
     `quantity` INT NOT NULL,
     `total_price` DECIMAL(13 , 4 ) NOT NULL,
-    `total_price_alter_discount` DECIMAL(13 , 4 ) NOT NULL,
+    `total_price_after_discount` DECIMAL(13 , 4 ) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE (`id_order` , `id_merchandise`),
     CONSTRAINT `fk_detail_order` FOREIGN KEY (`id_order`) REFERENCES `order` (`id`),
