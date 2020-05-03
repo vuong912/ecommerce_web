@@ -114,6 +114,7 @@ CREATE TABLE `store` (
     `blocked_date` DATETIME DEFAULT NULL,
     PRIMARY KEY (`id_user`),
     UNIQUE(`phone_number`),
+    CONSTRAINT `fk_store_user` FOREIGN KEY(`id_user`) REFERENCES `user` (`id`),
     CHECK(`total_star` >= 0 AND `times_rated` >= 0)
 );
 

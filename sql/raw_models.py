@@ -51,7 +51,7 @@ class Manager(models.Model):
 
 ### SELLER
 class Store(models.Model):
-    id_user = models.IntegerField(primary_key=True)
+    id_user = models.OneToOneField('User', models.DO_NOTHING, db_column='id_user', primary_key=True)
     name = models.CharField(max_length=256)
     avatar_url = models.CharField(max_length=2083)
     description = models.CharField(max_length=1000)
