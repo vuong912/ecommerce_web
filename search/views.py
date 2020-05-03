@@ -2,20 +2,23 @@ from django.shortcuts import render
 from book.models import Merchandise
 from common.utils import SQLUtils
 from django.core.paginator import Paginator
+from store.models import Store
 # Create your views here.
 SORT_SQL = {
     'newest': '`activated_date` DESC',
     'hotest': '(`merchandise`.`origin_quantity` - `merchandise`.`quantity`) DESC',
     'lowest_price': '`price` ASC',
     'highest_price': '`price` DESC',
+    'appreciated': '(`merchandise`.`total_star`/`merchandise`.`times_rated`) DESC',
 }
 def get_products(request):
     base_sql = '''
         {select}
         FROM
-            `merchandise` JOIN `address` JOIN `book` JOIN `book_category_detail` JOIN `book_category` 
+            `merchandise` JOIN `store` JOIN `address` JOIN `book` JOIN `book_category_detail` JOIN `book_category` 
             JOIN `merchandise_image` JOIN `image` JOIN `merchandise_portfolio` JOIN `merchandise_condition`
-            ON  `merchandise`.`id_address` = `address`.`id`
+            ON  `merchandise`.`id_user` = `store`.`id_user`
+                AND `merchandise`.`id_address` = `address`.`id`
                 AND `merchandise`.`id` = `book`.`id`
                 AND `book`.`id` = `book_category_detail`.`id_book`
                 AND `book_category_detail`.`id_category` = `book_category`.`id`
@@ -28,9 +31,9 @@ def get_products(request):
         {order};
     '''
     sqlutils = SQLUtils()
-    sqlutils.add_where(Merchandise.check_book_raw_query())
     sqlutils.add_where(Merchandise.check_selling_raw_query())
-    sqlutils.add_order(SORT_SQL.get(request.GET.get('sort'),None))
+    sqlutils.add_where(Store.check_opening_raw_query())
+    sqlutils.add_order(SORT_SQL.get(request.GET.get('sort'),SORT_SQL.get('newest')))
     ### Handle url queries
     if request.GET.get('location'):
         sqlutils.add_where('`address`.`city` = %s', request.GET.get('location'))
@@ -43,16 +46,16 @@ def get_products(request):
     if request.GET.get('q'):
         sqlutils.add_where('`book`.`name` LIKE %s', '%'+request.GET.get('q')+'%')
     ## Get cities
-    cities_select_clause = 'SELECT `address`.`city` as `id`, COUNT(`merchandise`.`id`) AS `num_books`'
+    cities_select_clause = 'SELECT `address`.`city` as `id`, COUNT(DISTINCT `merchandise`.`id`) AS `num_products`'
     cities = Merchandise.objects.raw(
         base_sql.format(select=cities_select_clause, where=sqlutils.get_where_clause(),
-                        group=' GROUP BY `address`.`city` ', order=' ORDER BY `num_books` DESC '),
+                        group=' GROUP BY `address`.`city` ', order=' ORDER BY `num_products` DESC '),
         sqlutils.get_params())
     ## Get conditions
-    conditions_select_clause = 'SELECT `merchandise_condition`.*, COUNT(`merchandise`.`id`) AS `num_books`'
+    conditions_select_clause = 'SELECT `merchandise_condition`.*, COUNT(DISTINCT  `merchandise`.`id`) AS `num_products`'
     conditions = Merchandise.objects.raw(
         base_sql.format(select=conditions_select_clause, where=sqlutils.get_where_clause(),
-                        group=' GROUP BY `merchandise_condition`.`id` ', order=' ORDER BY `num_books` DESC '),
+                        group=' GROUP BY `merchandise_condition`.`id` ', order=' ORDER BY `num_products` DESC '),
         sqlutils.get_params())
     ## Get books and paging
     products_select_clause = '''
@@ -69,7 +72,7 @@ def get_products(request):
     '''
     merchandises = Merchandise.objects.raw(
         base_sql.format(select=products_select_clause, where=sqlutils.get_where_clause(), 
-                        group=' GROUP BY `id` ', order=sqlutils.get_order_clause()),
+                        group=' GROUP BY `merchandise`.`id` ', order=sqlutils.get_order_clause()),
         sqlutils.get_params())
     print(merchandises)
     paginator = Paginator(merchandises, 9)
@@ -82,5 +85,5 @@ def get_products(request):
     for i in range(pager.number + 1, min(pager.number + 2, pager.paginator.num_pages) + 1):
         page_navigator.append(i)
     
-    return render(request, 'book/books.html', {
+    return render(request, 'search/products.html', {
         'pager':pager, 'page_navigator': page_navigator, 'cities':cities, 'conditions':conditions})

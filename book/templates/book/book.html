@@ -36,31 +36,37 @@
             <div class="col-md-8">
                 <div class="product-details">
                     <h1 class="product-title">{{ book.name }}</h1>
-                    <div class="product-meta">
-                        <ul class="list-inline">
-                            <li class="list-inline-item"><i class="fa fa-user-o"></i> By <a href="">Andrew</a></li>
-                            {% with categories=book.get_order_categories %}
-                            <li class="list-inline-item"><i class="fas fa-book"></i> <a
-                                    href="{% url 'book:get_books' categories.0.url_name %}">{{ categories.0.name }}</a></li>
-                            {% endwith %}
-                            <li class="list-inline-item"><i class="fa fa-location-arrow"></i> Đánh giá<a href="">{{ merchandise.times_rated }}</a>
-                            </li>
-                        </ul>
+                    <div class="d-flex justify-content-between" style="padding-bottom: 1em;">
+                        <div class="product-meta">
+                            <ul class="list-inline">
+                                <!--
+                                    <li class="list-inline-item"><i class="fa fa-user-o"></i> By <a href="">Andrew</a></li>
+                                -->
+                                {% with categories=book.get_order_categories %}
+                                <li class="list-inline-item"><i class="fas fa-book"></i> <a
+                                        href="{% url 'book:get_books' categories.0.url_name %}">{{ categories.0.name }}</a></li>
+                                {% endwith %}
+                                <li class="list-inline-item">
+                                    <i class="fa fa-location-arrow"></i> Đánh giá: {{merchandise.get_rate_point}} ({{ merchandise.times_rated }} lượt)
+                                </li>
+                            </ul>
+                        </div>
+    
+                        <div class="ratings">
+                            <ul class="list-inline">
+                                {% with t_star=book.rate_point|floatformat:0 %}
+                                {% for i in "12345" %}
+                                    {% if i <= t_star %}
+                                    <li class="list-inline-item"><i class="fa fa-star"></i></li>
+                                    {% else %}
+                                    <li class="list-inline-item"><i class="fa fa-star-o"></i></li>
+                                    {% endif %}
+                                {% endfor%}
+                                {% endwith %}
+                            </ul>
+                        </div>
                     </div>
-
-                    <div class="ratings">
-                        <ul class="list-inline">
-                            {% with t_star=book.rate_point|floatformat:0 %}
-                            {% for i in "12345" %}
-                                {% if i <= t_star %}
-                                <li class="list-inline-item"><i class="fa fa-star"></i></li>
-                                {% else %}
-                                <li class="list-inline-item"><i class="fa fa-star-o"></i></li>
-                                {% endif %}
-                            {% endfor%}
-                            {% endwith %}
-                        </ul>
-                    </div>
+                    
                     <!-- product slider -->
                     <!--<div class="product-slider" id="sli">
                         {% for book_image in merchandise.merchandiseimage_set.all %}
@@ -271,39 +277,28 @@
                     </div>
                     <!-- User Profile widget -->
                     <div class="widget user text-center">
-                        <img class="rounded-circle img-fluid mb-5 px-5" src="images/user/user-male.png" alt="">
-                        <h4><a href="">Jonathon Andrew</a></h4>
+                        <img class="rounded-circle img-fluid mb-5 px-5" src="{{ store.avatar_url }}" alt="">
+
+                        <h4><a href="{% url 'store:get_store' store.user.id %}">{{store.name}}</a></h4>
                         <div class="ratings">
                             <ul class="list-inline">
-                                <li class="list-inline-item">
-                                    <i class="fa fa-star"></i>
-                                </li>
-                                <li class="list-inline-item">
-                                    <i class="fa fa-star"></i>
-                                </li>
-                                <li class="list-inline-item">
-                                    <i class="fa fa-star"></i>
-                                </li>
-                                <li class="list-inline-item">
-                                    <i class="fa fa-star"></i>
-                                </li>
-                                <li class="list-inline-item">
-                                    <i class="fa fa-star"></i>
-                                </li>
+                                {% with t_star=store.get_rate_point|floatformat:0 %}
+                                    {% for i in "12345" %}
+                                    <li class="list-inline-item">
+                                        <i class="fa fa-star{% if i > t_star %}-o{% endif %}" style="font-size: 1em;"></i>
+                                    </li>
+                                    {% endfor%}
+                                {% endwith %}
                             </ul>
                         </div>
-                        <p class="member-time">
-                            Member Since Jun 27, 2017<br>
-                            Store : 300 products
-                        </p>
-                        <a href="">See all ads</a>
                         <ul class="list-inline mt-20">
-                            <li class="list-inline-item"><a href=""
-                                    class="btn btn-contact d-inline-block  btn-primary px-lg-5 my-1 px-md-3">Chat</a>
+                            <li class="list-inline-item">
+                                <a href="" class="btn btn-contact d-inline-block btn-primary">Chat</a>
                             </li>
-                            <li class="list-inline-item"><a href="shop.html"
-                                    class="btn btn-offer d-inline-block btn-primary ml-n1 my-1 px-lg-4 px-md-3">See
-                                    store</a></li>
+                            <li class="list-inline-item">
+                                <a class="btn btn-offer d-inline-block btn-primary"
+                                    href="{% url 'store:get_store' store.user.id %}">Xem cửa hàng</a>
+                            </li>
                         </ul>
                     </div>
                     <!-- Map Widget -->
