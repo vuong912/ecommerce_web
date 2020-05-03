@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from .models import Book, BookCategory, BookCategoryDetail, Merchandise
 from django.db.models import Count, Q, F
 from common.utils import SQLUtils
+from store.models import Store
 # Create your views here.
 SORT_SQL = {
     'newest': '`activated_date` DESC',
@@ -31,9 +32,10 @@ def get_books(request, url_category):
     base_sql = '''
         {select}
         FROM
-            `merchandise` JOIN `address` JOIN `book` JOIN `book_category_detail` JOIN `book_category` 
+            `merchandise` JOIN `store` JOIN `address` JOIN `book` JOIN `book_category_detail` JOIN `book_category` 
             JOIN `merchandise_image` JOIN `image` JOIN `merchandise_portfolio` JOIN `merchandise_condition`
-            ON  `merchandise`.`id_address` = `address`.`id`
+            ON  `merchandise`.`id_user` = `store`.`id_user`
+                AND `merchandise`.`id_address` = `address`.`id`
                 AND `merchandise`.`id` = `book`.`id`
                 AND `book`.`id` = `book_category_detail`.`id_book`
                 AND `book_category_detail`.`id_category` = `book_category`.`id`
@@ -49,6 +51,7 @@ def get_books(request, url_category):
     sqlutils.add_where('`book_category`.`url_name` = %s', url_category)
     sqlutils.add_where(Merchandise.check_book_raw_query())
     sqlutils.add_where(Merchandise.check_selling_raw_query())
+    sqlutils.add_where(Store.check_opening_raw_query())
     sqlutils.add_order(SORT_SQL.get(request.GET.get('sort'),None))
     ### Handle url queries
     if request.GET.get('location'):
@@ -60,13 +63,13 @@ def get_books(request, url_category):
     if request.GET.get('high_price'):
         sqlutils.add_where('`merchandise`.`price` <= %s', request.GET.get('high_price'))
     ## Get cities
-    cities_select_clause = 'SELECT `address`.`city` as `id`, COUNT(`merchandise`.`id`) AS `num_books`'
+    cities_select_clause = 'SELECT `address`.`city` as `id`, COUNT(DISTINCT `merchandise`.`id`) AS `num_books`'
     cities = Merchandise.objects.raw(
         base_sql.format(select=cities_select_clause, where=sqlutils.get_where_clause(),
                         group=' GROUP BY `address`.`city` ', order=' ORDER BY `num_books` DESC '),
         sqlutils.get_params())
     ## Get conditions
-    conditions_select_clause = 'SELECT `merchandise_condition`.*, COUNT(`merchandise`.`id`) AS `num_books`'
+    conditions_select_clause = 'SELECT `merchandise_condition`.*, COUNT(DISTINCT `merchandise`.`id`) AS `num_books`'
     conditions = Merchandise.objects.raw(
         base_sql.format(select=conditions_select_clause, where=sqlutils.get_where_clause(),
                         group=' GROUP BY `merchandise_condition`.`id` ', order=' ORDER BY `num_books` DESC '),
@@ -87,7 +90,7 @@ def get_books(request, url_category):
 
     merchandises = Merchandise.objects.raw(
         base_sql.format(select=products_select_clause, where=sqlutils.get_where_clause(), 
-                        group=' GROUP BY `id` ', order=sqlutils.get_order_clause()),
+                        group=' GROUP BY `merchandise`.`id` ', order=sqlutils.get_order_clause()),
         sqlutils.get_params())
 
     paginator = Paginator(merchandises, 9)
@@ -108,7 +111,7 @@ def get_book(request, id):
     #merchandise = get_object_or_404(Merchandise, pk=id).annotate(rate_point=F('total_star')/F('times_rated'))
     merchandise = Merchandise.objects.annotate(rate_point=F('total_star')/F('times_rated')).get(pk=id)
     book = get_object_or_404(Book, pk=merchandise.id_product)
+    store = Store.objects.get(pk=merchandise.user)
     return render(request, 'book/book.html', {
-        'merchandise': merchandise,
-        'book': book,
+        'merchandise':merchandise, 'book':book, 'store':store,
     })

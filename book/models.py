@@ -133,6 +133,8 @@ class Merchandise(models.Model):
     
     def get_saving_rate(self):
         return (1 - self.price / self.origin_price) * 100
+    def get_rate_point(self):
+        return self.total_star/self.times_rated if self.times_rated else 0
     @staticmethod
     def check_selling_raw_query():
         return ['`merchandise`.`blocked_date` IS NULL',
