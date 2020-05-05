@@ -2,6 +2,8 @@ from ecommerce_web.settings import EMAIL_HOST_USER
 from django.core.mail import send_mail as django_send_mail
 import string
 import random 
+from functools import wraps
+from django.http import JsonResponse
 
 def send_mail(send_to, subject, message):
     django_send_mail(subject, message, EMAIL_HOST_USER, [send_to], fail_silently=False)
@@ -13,6 +15,15 @@ def send_mail_verification_code(send_to, code):
 
 def get_random_string(length):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
+
+
+def ajax_login_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return view_func(request, *args, **kwargs)
+        return JsonResponse({'error':'Login required.'}, status=401)
+    return wrapper
 
 class SQLUtils:
     def __init__(self):
