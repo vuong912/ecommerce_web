@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'taghelper',
     'book',
     'cart',
+    'order',
+    'promotion',
     'users',
     'home',
     'menu',
