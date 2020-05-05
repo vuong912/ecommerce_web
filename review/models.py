@@ -22,7 +22,7 @@ class ReplyReview(models.Model):
     review = models.ForeignKey(Review, models.DO_NOTHING, db_column='id_review')
     content = models.CharField(max_length=512)
     created_by = models.ForeignKey(User, models.DO_NOTHING, db_column='created_by')
-    created_date = models.DateTimeField()
+    created_date = models.DateTimeField(default=timezone.now)
     delete_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:

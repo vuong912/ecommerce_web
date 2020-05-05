@@ -384,7 +384,7 @@
                                                 placeholder="Nhập nội dung trả lời ở đây"></textarea>
                                         </div>
                                         <div >
-                                            <button value="${review.id}" type="button" class="btn" style="padding:0.4em 1.2em; background-color:#C77000; color:#fff;">Gửi</button>
+                                            <button onclick="reply_review(${review.id})" value="${review.id}" type="button" class="btn" style="padding:0.4em 1.2em; background-color:#C77000; color:#fff;">Gửi</button>
                                         </div>
                                     </form>
                                 </div>
@@ -404,7 +404,7 @@
                                         <h5>${reply['by']}</h5>
                                     </div>
                                     <div class="date">
-                                        <p>${d.getDate()} / ${d.getMonth() + 1} / ${d.getFullYear()}</p>
+                                        <p>${d.toLocaleString("en-IE", {timeZone: "Asia/Ho_Chi_Minh"})}</p>
                                     </div>
                                     <div class="review-comment">
                                         <p>
@@ -453,18 +453,57 @@
             url: "{% url 'review:post_review' %}",
             data: {"id_merchandise": "{{ merchandise.id }}", "star":star, "content":review_content},
             success: function (response) {
-                console.log("DONE" , response)
                 get_reviews(1)
             },
             error: function (response) {
                 // alert the error if any error occured
-                console.log(response["responseJSON"]["error"]);
-                if(response.status===401){
-                    alert("Xin hãy đăng nhập.")
+                // console.log(response["responseJSON"]["error"]);
+                switch(response.status){
+                    case 401:
+                        alert("Xin hãy đăng nhập.");
+                        break;
+                    case 400:
+                        alert(response["responseJSON"]["error"]);
+                        break;
+                    case 500:
+                        alert("Đã có lỗi xảy ra, xin hãy thử lại sau.")
+                        break;
                 }
             }
         });
     }
     
+    function reply_review(id){
+        var reply_content = document.getElementById("reply_" + id).value;
+        console.log(reply_content)
+        if(reply_content===""){
+            alert("Xin hãy nhập nội dung.");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "{% url 'review:post_reply' %}",
+            data: {"id_merchandise": "{{ merchandise.id }}", "id_review":id, "content":reply_content},
+            success: function (response) {
+                console.log("DONE" , response)
+                get_reviews(1)
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                // console.log(response["responseJSON"]["error"]);
+                switch(response.status){
+                    case 401:
+                        alert("Xin hãy đăng nhập.");
+                        break;
+                    case 400:
+                        alert(response["responseJSON"]["error"]);
+                        break;
+                    case 500:
+                        alert("Đã có lỗi xảy ra, xin hãy thử lại sau.")
+                        break;
+                }
+            }
+        });
+    }
 </script>
 {% endblock %}
