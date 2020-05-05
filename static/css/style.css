@@ -4,6 +4,48 @@ body {
   line-height: 1.5;
   font-family: "Muli", sans-serif;
 }
+.quantity-order{
+   align-items:center;
+   margin-left:35px;
+}
+
+.price-order{
+    margin-left:5px;
+}
+.primary2-btn{
+    height: 40px;
+    padding: 0px 44px;
+    line-height: 38px;
+    text-transform: capitalize;
+    background: #C77000;
+    border-radius: 30px;
+    color: #fff;
+    font-weight: 500;
+}
+.primary2-btn:hover{
+    background: #f1f6f7;
+    color: #C77000;
+    transition: all ease .5s;
+}
+.delete-cart-icon {   
+    align-items: center;
+    float: right;
+}
+
+.delete-cart-icon:hover {
+    color: #C77000;
+    transition: all ease .5s;
+}
+.percent-cart-icon { 
+    margin-left:10px;
+    align-items: center;
+    float: left;
+}
+
+.percent-cart-icon:hover {
+    color: #C77000;
+    transition: all ease .5s;
+}
 
 p, li, input, select, button {
   font-family: "Muli", sans-serif;
@@ -17,9 +59,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: #333;
 }
-#sec{
-	padding: 10px 0;
-}
+
 p {
   color: #666;
 }
