@@ -8,7 +8,7 @@ class Notification(models.Model):
     content = models.CharField(max_length=1000)
     link = models.CharField(max_length=2083, blank=True, null=True)
     read_date = models.DateTimeField(blank=True, null=True)
-    created_date = models.DateTimeField(timezone.now)
+    created_date = models.DateTimeField(default=timezone.now)
     created_by = models.ForeignKey(User, models.DO_NOTHING, db_column='created_by', related_name='created_notification_set')
 
     class Meta:

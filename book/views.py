@@ -4,6 +4,7 @@ from .models import Book, BookCategory, BookCategoryDetail, Merchandise
 from django.db.models import Count, Q, F
 from common.utils import SQLUtils
 from store.models import Store
+from report.services import get_sample_reports
 # Create your views here.
 SORT_SQL = {
     'newest': '`activated_date` DESC',
@@ -112,6 +113,7 @@ def get_book(request, id):
     merchandise = Merchandise.objects.annotate(rate_point=F('total_star')/F('times_rated')).get(pk=id)
     book = get_object_or_404(Book, pk=merchandise.id_product)
     store = Store.objects.get(pk=merchandise.user)
+    sample_reports = get_sample_reports('merchandise')
     return render(request, 'book/book.html', {
-        'merchandise':merchandise, 'book':book, 'store':store,
+        'merchandise':merchandise, 'book':book, 'store':store, 'sample_reports':sample_reports,
     })
