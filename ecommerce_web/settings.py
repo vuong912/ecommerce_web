@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'seller',
     'review',
     'store',
     'search',
@@ -156,3 +157,5 @@ EMAIL_HOST_PASSWORD = 'tmdtservermail123'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+MAX_NUM_OF_PRODUCT_IMAGE = 6
