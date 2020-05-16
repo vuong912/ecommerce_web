@@ -58,3 +58,6 @@ def index(request):
                         group=' GROUP BY `merchandise`.`id` ', order=sqlutils.get_order_clause()),
         sqlutils.get_params())[:10]
     return render(request, 'home/index.html', {'hotest_merchandises':hotest_merchandises, 'newest_merchandises':newest_merchandises})
+
+def seller_dashboard(request):
+    return render(request, 'seller/dashboard.html')

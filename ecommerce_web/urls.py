@@ -29,4 +29,5 @@ urlpatterns = [
     path('store/', include('store.urls')),
     path('review/', include('review.urls')),
     path('notification/', include('notification.urls')),
+    path('seller/', include('seller.urls')),
 ]

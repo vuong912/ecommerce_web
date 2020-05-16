@@ -1,5 +1,4 @@
 {% load static %}
-{% load url_helper %}
 <section>
     <div class="container">
         <div class="row">
@@ -14,26 +13,28 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mr-auto main-nav ">
+                        <ul class="navbar-nav ml-auto main-nav ">
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'home:index' %}">Trang chủ</a>
                             </li>
-                            {% for sub_menu in menu %}
                             <li class="nav-item dropdown dropdown-slide">
                                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">
-                                    {{ sub_menu.name }} <span><i class="fa fa-angle-down"></i></span>
+                                    Sản phẩm <span><i class="fa fa-angle-down"></i></span>
                                 </a>
                                 <!-- Dropdown list -->
                                 <div class="dropdown-menu">
-                                    {% for item in sub_menu.bookcategory_set.all %}
-                                    <a class="dropdown-item" href="{% url 'book:get_books' item.url_name %}">{{ item.name }}</a>
-                                    {% endfor %}
-                                    <a class="dropdown-item" href="{% url 'book:get_books' sub_menu.url_name %}">Tất cả</a>
+                                    <a class="dropdown-item" href="{% url 'seller:add_book' %}">Tạo sản phẩm</a>
+                                    <a class="dropdown-item" href="#">Tất cả</a>
                                 </div>
                                 
                             </li>
-                            {% endfor %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="about-us.html">Đơn hàng</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="contact-us.html">Bình luận</a>
+                            </li>
                         </ul>
                         {% if user.is_authenticated %}
                         <ul class="navbar-nav ml-auto mt-10">
@@ -46,8 +47,6 @@
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="{% url 'user:info' %}"><i class="fas fa-address-card"></i> Thông tin cá nhân</a>
                                     <a class="dropdown-item" href="{% url 'cart:get_cart' %}"><i class="fas fa-shopping-cart"></i> Giỏ hàng của tôi</a>
-                                    <a class="dropdown-item" href="{% url 'user:notification' %}"><i class="fas fa-comment"></i> Thông báo ({% get_number_unread_notifications user %})</a>
-                                    <a class="dropdown-item" href="{% url 'seller:dashboard' %}"><i class="fas fa-store"></i> Trang người bán</a>
                                     <hr/>
                                     <form action="{% url 'user:logout' %}" method="POST">
                                         {% csrf_token %}
