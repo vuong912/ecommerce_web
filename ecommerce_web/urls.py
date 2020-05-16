@@ -27,4 +27,5 @@ urlpatterns = [
     path('search/', include('search.urls')),
     path('store/', include('store.urls')),
     path('review/', include('review.urls')),
+    path('notification/', include('notification.urls')),
 ]

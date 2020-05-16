@@ -30,4 +30,3 @@ INSERT INTO `reply_review`(`id`, `id_review`, `content`, `created_by`, `created_
 VALUES(1, 1, "khi một họa sĩ vô danh ghép nhiều đoạn văn bản với nhau để tạo thành một bản mẫu văn bản.", 1, "2020-04-27 05:04:27", null);
 INSERT INTO `reply_review`(`id`, `id_review`, `content`, `created_by`, `created_date`, `delete_date`)
 VALUES(2, 1, "Trái với quan điểm chung của số đông, Lorem Ipsum không phải chỉ là một đoạn văn bản ngẫu nhiên.", 1, "2020-04-28 03:04:27", null);
-
