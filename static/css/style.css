@@ -4,13 +4,28 @@ body {
   line-height: 1.5;
   font-family: "Muli", sans-serif;
 }
+.order_box{
+  padding: 50px 50px 100px 50px;
+}
 .quantity-order{
    align-items:center;
    margin-left:35px;
 }
-
+.contact_form{
+  padding-left: 20px;
+}
+#billing{
+  margin-left: 20px;
+  padding-left: 20px;
+  margin-top: -20px;
+}
+#diachinhanmoi, #diachinhanmacdinh{
+  color: #c77000;
+  font-weight: 700;
+}
 .price-order{
     margin-left:5px;
+    margin-top:15px;
 }
 .primary2-btn{
     height: 40px;
@@ -23,6 +38,22 @@ body {
     font-weight: 500;
 }
 .primary2-btn:hover{
+    background: #f1f6f7;
+    color: #C77000;
+    transition: all ease .5s;
+}
+.cancel-order-btn{
+    height: 40px;
+    padding: 0px 44px;
+    line-height: 38px;
+    text-transform: capitalize;
+    background: #C77000;
+    border-radius: 5px;
+    color: #fff;
+    
+    font-weight: 500;
+}
+.cancel-order-btn:hover{
     background: #f1f6f7;
     color: #C77000;
     transition: all ease .5s;

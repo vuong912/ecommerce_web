@@ -40,12 +40,20 @@
                                 </td>
                                 <!--Giá tiền-->
 								<td >
-									<p class="price-order">{{item.price}} VNĐ</p>
+									<p class="price-order">{{item.price|floatformat:0}} VNĐ</p>
 								</td>
                                 <!--Trạng thái-->
                                 <td class="status-order">
-                                    <p></p>
+                                    <p>{{item.status}}</p>
                                 </td>
+								<!--Hủy đơn hàng-->
+								{% ifequal item.status_code '1' %}
+								<td>                                   
+                                    <div class="checkout_btn_inner d-flex align-items-center">
+                                        <a class="cancel-order-btn ml-2" href="{% url 'order:cancel_order' item.id %}">Hủy đơn</a>
+                                    </div>
+                                </td>
+								{% endifequal %}
 							</tr>
 							{% endfor %}
 						</tbody>
