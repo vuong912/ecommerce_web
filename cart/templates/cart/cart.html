@@ -52,7 +52,7 @@
                                   </div>
                               </td>
                               <td>
-                                  <h5>{{ item.price }}</h5>
+                                  <h5>{{ item.price|floatformat:0 }}</h5>
                               </td>
                               <td>
                                   <div class="product_count">
@@ -118,7 +118,7 @@
                                   <h5>Thành tiền</h5>
                               </td>
                               <td>
-                                  <h5>{{ sub_total }}</h5>
+                                  <h5>{{ sub_total|floatformat:0 }}</h5>
                               </td>
                           </tr>
                           <tr class="out_button_area">
