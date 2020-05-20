@@ -32,11 +32,6 @@
                                 </td>
                                 <!--Chi tiết sản phẩm-->
 								<td class="product-details">
-<<<<<<< Updated upstream
-									<h3 class="title">{{item.name}}</h3>
-									<span class="add-id"><strong>Mã Sản phẩm:</strong>&nbsp; ng3D5hAMHPajQrM</span>
-									<span class="location"><strong>Địa chỉ nhận hàng:</strong>&nbsp;&nbsp;Dhaka,Bangladesh</span>
-=======
 									<h3 class="title"><a href="{% url 'book:get_book' item.id_book %}">{{item.name}}</a></h3>
 									<span class="add-id"><strong>Mã Sản phẩm:</strong>&nbsp;{{item.merchandise_id}} </span>
 									<span class="location"><strong>Địa chỉ nhận hàng:</strong>&nbsp;&nbsp;
@@ -44,7 +39,6 @@
 										{{full_address}}
 										{% endwith %}
 									</span>
->>>>>>> Stashed changes
 								</td>
                                 <!-- Số lượng-->
 								<td  >

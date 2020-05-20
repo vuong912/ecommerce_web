@@ -4,8 +4,6 @@ body {
   line-height: 1.5;
   font-family: "Muli", sans-serif;
 }
-<<<<<<< Updated upstream
-=======
 .check-pro-cl1{
   max-width: 250px;
   height: auto;
@@ -88,7 +86,6 @@ body {
     color: #C77000;
     transition: all ease .5s;
 }
->>>>>>> Stashed changes
 
 p, li, input, select, button {
   font-family: "Muli", sans-serif;

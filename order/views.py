@@ -1,10 +1,3 @@
-<<<<<<< Updated upstream
-from django.shortcuts import render, get_object_or_404
-from .models import Order, OrderStatus, DetailOrder, HistoryOrderStatus
-from cart.models import Cart
-from users.models import Address
-from django.core.paginator import Paginator
-=======
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Order, OrderStatus, DetailOrder, HistoryOrderStatus
 from cart.models import Cart
@@ -13,7 +6,6 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .forms import NewAddressForm
 from django.utils import timezone
->>>>>>> Stashed changes
 
 # Create your views here.
 @login_required
@@ -50,21 +42,12 @@ def order_detail(request, id_order):
         where `d_o`.`id_merchandise` = `m`.`id` AND `book`.`id` = `m`.`id_product` AND `m`.`id` = `m_img`.`id_merchandise` 
             AND `m_img`.`id_image` = `image`.`id`
             AND `d_o`.`id_order` = %s
-<<<<<<< Updated upstream
-    ''',str(id_order))
-    # print(details)
-    return render (request, 'order/order_detail.html', {'order':order, 'details':details})
-=======
     ''',[str(id_order)])
     address = Address.objects.get(pk = order.address_id)
     return render (request, 'order/order_detail.html', {'order':order, 'details':details, 'address':address})
->>>>>>> Stashed changes
 
 @login_required
 def check_out(request):
-<<<<<<< Updated upstream
-    return render (request, 'order/check_out.html')
-=======
     #get cart item
     cart_items = Cart.objects.raw('''
           select `cart`.`id`, `book`.`name`, `cart`.`quantity`, `m`.`id` `merchandise_id`, `m`.`price`, `image`.`url`
@@ -126,4 +109,3 @@ def check_out(request):
 def cancel_order(request, id_order):
     HistoryOrderStatus.objects.filter(order=id_order).update(order_status=4)
     return get_order(request)
->>>>>>> Stashed changes
