@@ -22,6 +22,7 @@
   
   
   <!--================Checkout Area =================-->
+<<<<<<< Updated upstream
   <section class="checkout_area section-margin--small">
     <div class="container">
         <div class="returning_customer">
@@ -113,13 +114,79 @@
                             <div class="creat_account">
                                 <input type="checkbox" id="f-option2" name="selector">
                                 <label for="f-option2">Create an account?</label>
+=======
+    <section class="checkout_area section-margin--small">
+        <div class="container">
+            <div class="billing_details" id="billing">
+                <form class="row contact_form col-12" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="row col-6">
+                        {% for item in address %}
+                        <div class="col-lg-12">
+                        <h3 id="diachinhanmacdinh"> <input name="diachinhan" type="radio" checked="check" value="{{item.id}}"> Địa chỉ mặc định :</h3>
+                                <div class="col-12">    
+                                    <h6>Tên người nhận: {{item.owner}}</h6>
+                                    <h6>Số điện thoại: {{item.phone_number}}</h6>
+                                    <h6>
+                                        Địa chỉ: {% with item.no|add:" "|add:item.street|add:" P."|add:item.ward|add:" Q."|add:item.district|add:" "|add:item.city as address_str %} 
+                                                {{ address_str }}
+                                                {% endwith %}
+                                    </h6>
+                                    <br>
+                                </div>
+                        </div>
+                        {%endfor%}
+                        <div class= "col-lg-12"> <br>
+                            <h3 id="diachinhanmoi"> <input name="diachinhan" type="radio" value="Nhập địa chỉ mới"> Nhập địa chỉ mới :</h3>
+                            <div class="col-12">
+                                {% csrf_token %}
+                                {% for field in form.visible_fields %}
+                                    <div class="fieldWrapper">
+                                        {{ field.label_tag }} <br>
+                                        {{ field }}
+                                        {{ field.errors }}
+                                    </div>
+                                {% endfor %}
+>>>>>>> Stashed changes
                             </div>
                         </div>
+<<<<<<< Updated upstream
                         <div class="col-md-12 form-group mb-0">
                             <div class="creat_account">
                                 <h3>Shipping Details</h3>
                                 <input type="checkbox" id="f-option3" name="selector">
                                 <label for="f-option3">Ship to a different address?</label>
+=======
+                    </div>
+                    <div class="col-6">
+                        <div class="order_box">
+                            <h2>Your Order</h2>
+                            <ul class="list">
+                                <li><h4>Product <span>Total</span></h4></li>
+                                {% for item in cart %}
+                                    <li>
+                                        <div class="row">
+                                            <div class="check-pro-cl1 col-md-6">{{item.name}} </div>
+                                            <span class="check-pro-cl3 col-md-2">x{{item.quantity}}</span> 
+                                            <span class=" check-pro-cl3 col-md-3 ">{{item.price|floatformat:0}}đ</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <ul class="list list_2">
+                                <li><a href="#">Subtotal <span>{{sub_total|floatformat:0}}đ</span></a></li>
+                                <li><a href="#">Shipping <span>Flat rate: $50.00</span></a></li>
+                                <li><a href="#">Total <span>{{sub_total|floatformat:0}}đ</span></a></li>
+                            </ul>
+                            <div class="payment_item">
+                                <div class="radion_btn">
+                                    <input type="radio" id="f-option5" name="selector">
+                                    <label for="f-option5">Check payments</label>
+                                    <div class="check"></div>
+                                </div>
+                                <p>Please send a check to Store Name, Store Street, Store Town, Store State / County,
+                                    Store Postcode.</p>
+>>>>>>> Stashed changes
                             </div>
                             <textarea class="form-control" name="message" id="message" rows="1" placeholder="Order Notes"></textarea>
                         </div>
