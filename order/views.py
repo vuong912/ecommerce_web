@@ -1,10 +1,19 @@
+<<<<<<< Updated upstream
 from django.shortcuts import render, get_object_or_404
+from .models import Order, OrderStatus, DetailOrder, HistoryOrderStatus
+from cart.models import Cart
+from users.models import Address
+from django.core.paginator import Paginator
+=======
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Order, OrderStatus, DetailOrder, HistoryOrderStatus
 from cart.models import Cart
 from users.models import Address
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .forms import NewAddressForm
+from django.utils import timezone
+>>>>>>> Stashed changes
 
 # Create your views here.
 @login_required
@@ -41,12 +50,21 @@ def order_detail(request, id_order):
         where `d_o`.`id_merchandise` = `m`.`id` AND `book`.`id` = `m`.`id_product` AND `m`.`id` = `m_img`.`id_merchandise` 
             AND `m_img`.`id_image` = `image`.`id`
             AND `d_o`.`id_order` = %s
+<<<<<<< Updated upstream
     ''',str(id_order))
     # print(details)
     return render (request, 'order/order_detail.html', {'order':order, 'details':details})
+=======
+    ''',[str(id_order)])
+    address = Address.objects.get(pk = order.address_id)
+    return render (request, 'order/order_detail.html', {'order':order, 'details':details, 'address':address})
+>>>>>>> Stashed changes
 
 @login_required
 def check_out(request):
+<<<<<<< Updated upstream
+    return render (request, 'order/check_out.html')
+=======
     #get cart item
     cart_items = Cart.objects.raw('''
           select `cart`.`id`, `book`.`name`, `cart`.`quantity`, `m`.`id` `merchandise_id`, `m`.`price`, `image`.`url`
@@ -56,28 +74,56 @@ def check_out(request):
                AND `cart`.`id_user` = %s
           group by `cart`.`id`;
      ''',[str(request.user.id)])
-        #tính thành tiền
+
+    #subtotal
     sub_total = 0
     for i in cart_items:
         sub_total += i.price * i.quantity
 
     # form show
-    form = NewAddressForm()
-    # if request.method == 'POST':
-    #     #lưu form nhập thông tin địa chỉ giao hàng mới
-    #     form = NewAddressForm(request.POST)
-    #     if form.is_valid():
-    #         form.save()
-    #         #lưu đơn hàng
-    #         # order = Order()
-    #         # order.save()
-    #         return redirect('order:order')
+    form = NewAddressForm(current_user=request.user)
+    if request.method == 'POST':
+        #lưu form nhập thông tin địa chỉ giao hàng mới
+        if request.POST.get("diachinhan") == "Nhập địa chỉ mới":
+            form = NewAddressForm(request.POST, current_user=request.user)
+            if form.is_valid():
+                shipping_address_id = form.save()
+        else:
+            shipping_address_id = request.POST.get("diachinhan")
+
+        #tách và lưu đơn hàng
+        store_address = Cart.objects.raw('''
+            select distinct c.id, m.id_address
+            from merchandise as m join cart as c 
+            where c.id_user = %s and m.id=c.id_merchandise
+            group by m.id_address;
+        ''', str(request.user.id))
+        # create order with each store_address
+        for i in store_address:
+            cart = Cart.objects.raw('''
+                select m.id, c.quantity, m.price
+                from cart as c join merchandise as m
+                where m.id = c.id_merchandise and
+                    m.id_address = %s and c.id_user = %s
+            ''', [str(i.id_address), str(request.user.id)])
+            new_order = Order.objects.create(user_id = request.user.id, address_id = shipping_address_id, payment_id = 1, delivery_id = 1, 
+                                            fee_delivery = 0, created_date = timezone.now())
+            # create Detail of each order
+            for item in cart:
+                DetailOrder.objects.create(order_id = new_order.pk, merchandise_id = item.id, promotion_id = 1, quantity = item.quantity,
+                                            total_price = item.price*item.quantity, total_price_after_discount = item.price*item.quantity)
+            # create history_status gor current order
+            HistoryOrderStatus.objects.create(order_id = new_order.pk, order_status_id = 1, created_date = timezone.now(), 
+                                                    created_by = request.user)
+        
+        return redirect('order:order')
 
     # get user address
-    address = Address.objects.filter(user_id=request.user.id)
+    address = Address.objects.filter(user_id=request.user.id, delete_date=None)
     return render (request, 'order/check_out.html', {'form':form, 'cart':cart_items, 'sub_total':sub_total, 'address':address})
 
 @login_required
 def cancel_order(request, id_order):
     HistoryOrderStatus.objects.filter(order=id_order).update(order_status=4)
     return get_order(request)
+>>>>>>> Stashed changes
