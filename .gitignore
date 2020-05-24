@@ -135,3 +135,7 @@ env/
 .history
 
 # End of https://www.gitignore.io/api/visualstudiocode
+
+### Media folder ###
+media/
+####################
