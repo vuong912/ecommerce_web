@@ -4,8 +4,6 @@ body {
   line-height: 1.5;
   font-family: "Muli", sans-serif;
 }
-<<<<<<< Updated upstream
-=======
 .check-pro-cl1{
   max-width: 250px;
   height: auto;
@@ -89,7 +87,6 @@ body {
     color: #C77000;
     transition: all ease .5s;
 }
->>>>>>> Stashed changes
 
 p, li, input, select, button {
   font-family: "Muli", sans-serif;
@@ -103,9 +100,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   color: #333;
 }
-#sec{
-	padding: 10px 0;
-}
+
 p {
   color: #666;
 }
@@ -1183,6 +1178,7 @@ ul.pagination .active a {
   width: 15%;
 }
 
+/*
 .dashboard-container tbody tr:hover .action a {
   color: #fff;
 }
@@ -1196,6 +1192,25 @@ ul.pagination .active a {
 }
 
 .dashboard-container tbody tr:hover .action a.delete {
+  background: #ff5252;
+}
+*/
+.action a{
+  cursor: pointer;
+}
+.action a:hover {
+  color: #fff;
+}
+
+.action a.edit_icon:hover {
+  background: #C77000;
+}
+
+.action a.view_icon:hover {
+  background: #C77000;
+}
+
+.action a.delete_icon:hover {
   background: #ff5252;
 }
 
