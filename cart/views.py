@@ -5,26 +5,32 @@ from .models import Cart
 from book.models import Merchandise
 from django.utils import timezone
 from django.http import JsonResponse
-
+from common.utils import ajax_login_required
 # Create your views here.
 
-@login_required
+@ajax_login_required
 def add_book_to_cart(request):
      if request.method == "POST":
           merchandise = Merchandise.objects.get(pk=request.POST.get("merchandise"))
+          quantity = int(request.POST.get("quantity"))
+          if quantity <= 0:
+               return JsonResponse({'error':'Số lượng sản phẩm được chọn phải lớn hơn 0.'})
+          if not merchandise.is_selling():
+               return JsonResponse({'error': 'Sản phẩm hiện không còn bán.'},status=400) 
           cart = Cart.objects.filter(user=request.user, merchandise=merchandise).first()
           if cart: 
-               cart.quantity += request.POST.get("quantity")
+               cart.quantity += quantity
                cart.save()
           else:
                Cart.objects.create(
                     user = request.user,
                     merchandise = merchandise,
-                    quantity = request.POST.get("quantity"),
+                    quantity = quantity,
                     created_date = timezone.now(),
-                    expire_date = timezone.now()+datetime.timedelta(1*30)
+                    expire_date = timezone.now()+timezone.timedelta(1*30)
                )
-     return JsonResponse({},status=200) 
+          return JsonResponse({}, status=200) 
+     return JsonResponse({},status=400) 
 
 def delete_expired_item(request):
      expired_item = Cart.objects.filter(user=request.user, expire_date__lte=timezone.now())
