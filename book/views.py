@@ -161,3 +161,5 @@ def add_book(request):
         {'book_categories':book_categories_json,'cities':CITIES, 'addresses':addresses, 'store':store,
         'portfolios':merchandise_portfolios, 'deliveries': deliveries, 'conditions': conditions})
     
+def get_my_merchandises(request):
+    return render(request, 'seller/books.html')
