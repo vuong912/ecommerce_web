@@ -10,7 +10,7 @@ from report.services import get_sample_reports
 from django.core import serializers
 from users.services import CITIES, get_addresses_without_pager
 from .forms import BookForm
-from .services import save_image, get_avaiable_merchandises
+from .services import save_image, get_avaiable_merchandises, get_avaiable_authors
 from django.http import JsonResponse
 import os
 import datetime
@@ -168,12 +168,7 @@ def add_book(request):
     deliveries = Delivery.objects.filter(delete_date = None)
     conditions = MerchandiseCondition.objects.filter(delete_date = None)
 
-    authors_autocomplete = "[" + ", ".join(['"'+author.id+'"' for author in Book.objects.raw('''
-        SELECT DISTINCT `author` AS `id`
-        FROM `book` JOIN `merchandise` 
-        ON `book`.`id` = `merchandise`.`id_product` 
-        WHERE `blocked_date` IS NULL AND `activated_date` IS NOT NULL;
-    ''')]) + "]"
+    authors_autocomplete = "[" + ", ".join(['"'+author.id+'"' for author in get_avaiable_authors()]) + "]"
 
     return render(request, 'seller/add_book.html', 
         {'book_categories':book_categories_json,'cities':CITIES, 'addresses':addresses, 'store':store,
