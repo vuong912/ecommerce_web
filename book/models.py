@@ -5,6 +5,7 @@ from django.utils import timezone
 
 class Book(models.Model):
     name = models.CharField(max_length=256)
+    author = models.CharField(max_length=256)
     publisher = models.CharField(max_length=256)
     publication_date = models.DateField()
     width = models.SmallIntegerField()

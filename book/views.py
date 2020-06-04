@@ -3,14 +3,14 @@ from django.core.paginator import Paginator
 from .models import Book, BookCategory, BookCategoryDetail, Merchandise, MerchandisePortfolio, Delivery, MerchandiseCondition
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q, F
-from common.utils import SQLUtils, is_image_file, get_object_or_none
+from common.utils import SQLUtils, is_image_file, get_object_or_none, Map
 import json
 from store.models import Store 
 from report.services import get_sample_reports
 from django.core import serializers
 from users.services import CITIES, get_addresses_without_pager
 from .forms import BookForm
-from .services import save_image, get_avaiable_merchandises
+from .services import save_image, get_avaiable_merchandises, get_avaiable_authors
 from django.http import JsonResponse
 import os
 import datetime
@@ -22,10 +22,17 @@ SORT_SQL = {
     'highest_price': '`price` DESC',
     'appreciated': '(`merchandise`.`total_star`/`merchandise`.`times_rated`) DESC',
 }
-def get_books(request, url_category):
+def get_books(request):
     ## Get category, children categories
-    category = BookCategory.objects.filter(url_name = url_category).first()
+    if request.GET.get('category'):
+        category = BookCategory.objects.filter(url_name = request.GET.get('category')).first()
+        children_categories_where_clause = "WHERE `cat`.`id_parent` = {};".format(category.id)
+    else:
+        category = Map(url_name = '', name = 'Sách')
+        children_categories_where_clause = "WHERE `cat`.`id_parent` IS NULL;"
+    print(category)
     #children_categories = category.bookcategory_set.annotate(num_books=Count('bookcategorydetail'))
+    
     children_categories = BookCategory.objects.raw('''
         SELECT 
             `cat`.`id` as `id`,
@@ -37,8 +44,7 @@ def get_books(request, url_category):
             AND `mer`.`blocked_date` IS NULL AND `mer`.`activated_date` IS NOT NULL
             ) AS num_books
         FROM `book_category` `cat`
-        WHERE `cat`.`id_parent` = %s;
-    ''',[category.id])
+    ''' + children_categories_where_clause)
     base_sql = '''
         {select}
         FROM
@@ -58,12 +64,16 @@ def get_books(request, url_category):
         {order};
     '''
     sqlutils = SQLUtils()
-    sqlutils.add_where('`book_category`.`url_name` = %s', url_category)
+    
     sqlutils.add_where(Merchandise.check_book_raw_query())
     sqlutils.add_where(Merchandise.check_selling_raw_query())
     sqlutils.add_where(Store.check_opening_raw_query())
     sqlutils.add_order(SORT_SQL.get(request.GET.get('sort'),None))
     ### Handle url queries
+    if request.GET.get('category'):
+        sqlutils.add_where('`book_category`.`url_name` = %s', request.GET.get('category'))
+    if request.GET.get('author'):
+        sqlutils.add_where('`book`.`author` = %s', request.GET.get('author'))
     if request.GET.get('location'):
         sqlutils.add_where('`address`.`city` = %s', request.GET.get('location'))
     if request.GET.get('condition'):
@@ -111,7 +121,7 @@ def get_books(request, url_category):
     page_navigator.append(pager.number)
     for i in range(pager.number + 1, min(pager.number + 2, pager.paginator.num_pages) + 1):
         page_navigator.append(i)
-    
+
     return render(request, 'book/books.html', {
         'pager':pager, 'page_navigator': page_navigator, 'children_categories':children_categories, 
         'current_category':category, 'cities':cities, 'conditions':conditions})
@@ -157,7 +167,10 @@ def add_book(request):
     merchandise_portfolios = MerchandisePortfolio.objects.filter(delete_date = None)
     deliveries = Delivery.objects.filter(delete_date = None)
     conditions = MerchandiseCondition.objects.filter(delete_date = None)
+
+    authors_autocomplete = "[" + ", ".join(['"'+author.id+'"' for author in get_avaiable_authors()]) + "]"
+
     return render(request, 'seller/add_book.html', 
         {'book_categories':book_categories_json,'cities':CITIES, 'addresses':addresses, 'store':store,
-        'portfolios':merchandise_portfolios, 'deliveries': deliveries, 'conditions': conditions})
+        'portfolios':merchandise_portfolios, 'deliveries': deliveries, 'conditions': conditions, 'authors_autocomplete': authors_autocomplete})
     

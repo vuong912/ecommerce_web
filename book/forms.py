@@ -14,6 +14,7 @@ class BookForm(forms.Form):
 
     name = forms.CharField(widget=forms.TextInput())
     id_portfolio = forms.CharField(widget=forms.TextInput())
+    author = forms.CharField(widget=forms.TextInput())
     publisher = forms.CharField(widget=forms.TextInput())
     publicdate = forms.CharField(widget=forms.TextInput())
     length = forms.DecimalField(min_value=0)
@@ -71,6 +72,7 @@ class BookForm(forms.Form):
 
                 book = Book(
                     name=self.cleaned_data['name'],
+                    author=self.cleaned_data['author'],
                     publisher=self.cleaned_data['publisher'],
                     publication_date=publicdate,
                     width=self.cleaned_data['width'],
