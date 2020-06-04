@@ -1,0 +1,163 @@
+{% extends 'seller_base.html' %}
+{% load static %}
+{% block content %}
+<section class="dashboard section">
+    <!-- Container Start -->
+    <div class="container">
+        <!-- Row Start -->
+        <div class="row">
+
+            <div class="col-md-12">
+                <!-- Recently Favorited -->
+                <div class="widget dashboard-container my-adslist">
+                    <h3 class="widget-header">DANH SÁCH SẢN PHẨM </h3>
+                    <table class="table product-dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Hình ảnh</th>
+                                <th>Sản phẩm</th>
+                                <th class="text-center">Thể loại</th>
+                                <th class="text-center">Số lượng tồn</th>
+                                <th class="text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="product-thumb">
+                                    <img width="80px" height="auto" src="images/products/products-1.jpg"
+                                        alt="image description"></td>
+                                <td class="product-details" style="width:350px;">
+                                    <h3 class="title">Macbook Pro 15inch</h3>
+                                    <span class="add-id"><strong>Mã sản phẩm:</strong> ng3D5hAMHPajQrM</span>
+                                    <span><strong>Ngày đăng: </strong><time>Jun 27, 2017</time> </span>
+                                </td>
+                                <td class="product-category"><span class="categories">Laptops</span></td>
+                                <td>
+                                    <p style="text-align:center">100</p>
+                                </td>
+                                <td class="action" data-title="Action">
+                                    <div class="">
+                                        <ul class="list-inline justify-content-center">
+                                            <li class="list-inline-item">
+                                                <a data-toggle="tooltip" data-placement="top"
+                                                    title="Xem sản phẩm trên BOOK MARKET" class="view"
+                                                    href="single.html">
+                                                    <i class="fa fa-eye"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a data-toggle="modal" data-target="#ModalEditProducts"
+                                                    data-placement="top" title="Sửa" class="edit" href="#">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a data-toggle="tooltip" data-placement="top" title="Xóa" class="delete"
+                                                    href="">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!--Modal edit sản phẩm-->
+                            <div class="modal modal-edit" tabindex="-1" role="dialog" id="ModalEditProducts"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <form>
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Chỉnh sửa sản phẩm</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+
+                                            <div id="form-edit">
+                                                <div id="txt">
+                                                    <br />
+                                                    Tên sản phẩm : <input type="text" class="input"><br><br>
+
+                                                    <div class="">
+                                                        <fieldset class="form-group">
+                                                            Hình ảnh sản phẩm: <a href="javascript:void(0)"
+                                                                onclick="$('#pro-image').click()">
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Thêm hình ảnh</a>
+                                                            <input type="file" id="pro-image" name="pro-image"
+                                                                style="display: none;" class="form-control" multiple>
+                                                        </fieldset>
+                                                        <div class="preview-images-zone">
+                                                            <div class="preview-image preview-show-1">
+                                                                <div class="image-cancel" data-no="1">x</div>
+                                                                <div class="image-zone"><img id="pro-img-1"
+                                                                        src="images/products/products-1.jpg"></div>
+                                                                <div class="tools-edit-image"><a
+                                                                        href="javascript:void(0)" data-no="1"
+                                                                        class=" btn-light btn-edit-image">edit</a></div>
+                                                            </div>
+                                                            <div class="preview-image preview-show-2">
+                                                                <div class="image-cancel" data-no="2">x</div>
+                                                                <div class="image-zone"><img id="pro-img-2"
+                                                                        src="images/products/products-1.jpg"></div>
+                                                                <div class="tools-edit-image"><a
+                                                                        href="javascript:void(0)" data-no="2"
+                                                                        class=" btn-light btn-edit-image">edit</a></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <br>
+                                                    <p>Giá tiền : &nbsp;&nbsp;&nbsp;&nbsp;
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input
+                                                            type="text" class="input"><br><br></p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a class="btn btn-secondary" href="#">Lưu thay đổi</a>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Hủy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--Modal end-->
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- pagination -->
+                <div class="pagination justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <!-- pagination -->
+
+            </div>
+        </div>
+        <!-- Row End -->
+    </div>
+    <!-- Container End -->
+</section>
+{% endblock %}

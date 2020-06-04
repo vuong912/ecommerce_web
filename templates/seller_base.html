@@ -39,6 +39,8 @@
     <!-- CUSTOM CSS -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/Chart.min.js' %}"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -59,6 +61,17 @@
 
         .full-size-select>.list {
             width: 100%;
+        }
+        .title-text-color{
+            color:#C77000;
+        }
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+        .box-analysic{
+            margin-bottom: 1em;
         }
 
         .autocomplete {
