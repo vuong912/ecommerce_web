@@ -8,24 +8,35 @@
         <div class="row">
             <div class="col-md-3 offset-md-1 col-lg-4 offset-lg-0">
                 <div class="widget text-center">
-                    <h5 class="widget-header title-text-color">Danh sách cần làm</h5>
-                    <a href="">
-                        <p class="title-text-color">0</p>
-                        <p>Chờ Lấy Hàng</p>
+                    <h5 class="widget-header title-text-color">Sản phẩm đã đăng</h5>
+                    <a>
+                        <p class="title-text-color">{{ merchandise_counter.all }}</p>
+                        <p>Tất cả</p>
                     </a>
-                    <a href="">
-                        <p class="title-text-color">0</p>
-                        <p>Chờ Xác Nhận</p>
+                    <a href="{% url 'seller:get_merchandises' %}?status=selling">
+                        <p class="title-text-color">{{ merchandise_counter.selling }}</p>
+                        <p>Đang bán</p>
                     </a>
-                    <a href="">
-                        <p class="title-text-color">0</p>
-                        <p>Đơn Hủy</p>
+                    <a href="{% url 'seller:get_merchandises' %}?status=sold_out">
+                        <p class="title-text-color">{{ merchandise_counter.sold_out }}</p>
+                        <p>Đã bán hết</p>
                     </a>
-                    <a href="">
-                        <p class="title-text-color">0</p>
-                        <p>Sản phẩm hết hàng</p>
+                    <a href="{% url 'seller:get_merchandises' %}?status=pending">
+                        <p class="title-text-color">{{ merchandise_counter.pending }}</p>
+                        <p>Đang chờ kiểm duyệt</p>
                     </a>
-
+                    <a href="{% url 'seller:get_merchandises' %}?status=stopping">
+                        <p class="title-text-color">{{ merchandise_counter.stopping }}</p>
+                        <p>Đang dừng bán</p>
+                    </a>
+                    <a href="{% url 'seller:get_merchandises' %}?status=blocked">
+                        <p class="title-text-color">{{ merchandise_counter.blocked }}</p>
+                        <p>Bị khóa</p>
+                    </a>
+                    <a href="{% url 'seller:get_merchandises' %}?status=rejected">
+                        <p class="title-text-color">{{ merchandise_counter.rejected }}</p>
+                        <p>Bị từ chối</p>
+                    </a>
                 </div>
                 <div class="widget text-center">
                     <h5 class="widget-header title-text-color">Hiệu quả hoạt động</h5>
