@@ -1,12 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Order, OrderStatus, DetailOrder, HistoryOrderStatus
+from .models import Order, OrderStatus, DetailOrder, HistoryOrderStatus, Payment, Delivery
 from cart.models import Cart
 from book.models import Merchandise
 from users.models import Address
+from review.models import AllowedReviewTimes
 from common.utils import SQLUtils, get_object_or_none
+from notification.services import send_notification_by_system
+from .forms import NewAddressForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .forms import NewAddressForm
 from django.utils import timezone
 from django.db import transaction, DatabaseError
 
@@ -32,6 +34,11 @@ def get_order(request):
             return render (request, 'order/order_detail.html', {'order':order, 'details':details, 'address':address})
 
     # get order
+    # get sort
+    sort = 'desc'
+    if request.GET.get("sort"):
+        sort = request.GET.get("sort")
+        
     order = Order.objects.raw('''
         select `order`.`id`, `order`.`created_date`, `book`.`name`, sum(`dt_o`.`total_price_after_discount`) `price`
             , `stt`.`name` `status`, `stt`.`code` `status_code`
@@ -41,10 +48,10 @@ def get_order(request):
             AND `h`.`id_order`=`tim_max_date`.`id_order` and `h`.`id_order_status` = `stt`.`id` and `h`.`created_date` = `tim_max_date`.`max`
             AND `order`.`id_user` = %s
         group by `order`.`id`
-        order by `created_date` desc
-    ''', [str(request.user.id)])
-    #print(order)
-    paginator = Paginator(order, 5)
+        order by `order`.`created_date` 
+    ''' + sort, [str(request.user.id)])
+
+    paginator = Paginator(order, 7)
     page_number = request.GET.get('page')
     pager = paginator.get_page(page_number)
     page_navigator = []
@@ -54,7 +61,7 @@ def get_order(request):
     for i in range(pager.number + 1, min(pager.number + 2, pager.paginator.num_pages) + 1):
         page_navigator.append(i)
 
-    return render(request, 'order/order_list.html', {'pager':pager, 'page_navigator': page_navigator})
+    return render(request, 'user/order.html', {'pager':pager, 'page_navigator': page_navigator})
 
 def cancel_order(request):
     HistoryOrderStatus.objects.filter(order=request.POST.get("id_order")).update(order_status=4)
@@ -77,15 +84,18 @@ def check_out(request):
     #subtotal
     sub_total = 0
     for i in cart_items:
+        if not Merchandise.objects.get(pk = i.merchandise_id).is_selling():
+            return redirect_404
         sub_total += i.price * i.quantity
 
-    # form show
-    form = NewAddressForm(current_user=request.user)
+    # get payment method
+    payment = Payment.objects.all()
+    # get delivery method
+    delivery = Delivery.objects.all()
 
     # check_out exceed
     if request.method == 'POST':
-        #lưu form nhập thông tin địa chỉ giao hàng mới
-
+        #lấy địa chỉ giao hàng
         shipping_address_id = request.POST.get("pro-idaddress")
     # split order
         store_address = Cart.objects.raw('''
@@ -106,8 +116,8 @@ def check_out(request):
                         where m.id = c.id_merchandise and
                             m.id_address = %s and c.id_user = %s
                     ''', [str(i.id_address), str(request.user.id)])
-                    new_order = Order.objects.create(user_id = request.user.id, address_id = shipping_address_id, payment_id = 1, delivery_id = 1, 
-                                                    fee_delivery = 0, created_date = timezone.now())
+                    new_order = Order.objects.create(user_id = request.user.id, address_id = shipping_address_id, payment_id = request.POST.get("payment"),
+                                                    delivery_id = request.POST.get("delivery"), fee_delivery = 0, created_date = timezone.now())
                     
                     # create Detail of each order
                     for item in cart:
@@ -118,21 +128,59 @@ def check_out(request):
                         merchandise.quantity_exists -= item.quantity
                         merchandise.save()
 
+                        # increase review times
+                        try:
+                            allow_rv = AllowedReviewTimes.objects.get(user_id = request.user.id, merchandise_id = item.id)
+                            allow_rv.times += 1
+                            allow_rv.save()
+                            pass    
+                        except:
+                            AllowedReviewTimes.objects.create(user_id = request.user.id, merchandise_id = item.id, times = 1) 
+
                     # create history_status gor current order
                     HistoryOrderStatus.objects.create(order_id = new_order.pk, order_status_id = 1, created_date = timezone.now(), 
                                                             created_by = request.user)
                 
                 # delete all cart objects after check_out
                 Cart.objects.filter(user = request.user.id).delete()
+                
+                send_notification_by_system(request.user, 'Cảm ơn bạn đã đặt hàng.')
         except DatabaseError as error:
             print(error)
 
-        return redirect('order:order')
+        return redirect('user:order')
 
     # get user address
     address = Address.objects.filter(user_id=request.user.id, delete_date=None)
-    return render (request, 'order/check_out.html', {'form':form, 'cart':cart_items, 'sub_total':sub_total, 'address':address})
+    return render (request, 'order/check_out.html', {'cart':cart_items, 'sub_total':sub_total, 'payment':payment, 'delivery':delivery, 'address':address})
 
+def change_status(request):
+    id_order = request.POST.get("id_order")
+    if request.POST.get("order_note") != "" :
+        note = request.POST.get("order_note")
+    else:
+        note = None
+    
+    id_status = int(request.POST.get("change_status_"+id_order))
+    HistoryOrderStatus.objects.create(
+        order_id = id_order, 
+        order_status_id = id_status,
+        created_date = timezone.now(),
+        created_by = request.user,
+        note = note
+    )
+    if id_status == 4:
+        # gửi thông báo hủy kèm lý do
+        send_notification_by_system(request.user, "Đơn hàng của bạn đã bị hủy với lý do "+note)
+    elif id_status == 3:
+        # giảm số lượng trong merchandise và kiểm tra còn hàng 0 sau khi giao thành công
+        detail_order = DetailOrder.objects.filter(order_id = id_order)
+        for item in detail_order:
+            merchandise = Merchandise.objects.get(pk = item.merchandise_id)
+            merchandise.quantity -= item.quantity
+            if merchandise.quantity == 0:
+                merchandise.stopped_date = timezone.now()
+            merchandise.save()
 
 def seller_get_order(request):
     post_param = {}
@@ -141,15 +189,9 @@ def seller_get_order(request):
         'selected_status':request.POST.get("selected_status"),
         'search_order':request.POST.get("search_order")
         }
-        print(post_param)
         id_order = request.POST.get("id_order")
         if request.POST.get("change_status_"+id_order):
-            HistoryOrderStatus.objects.create(
-                order_id = id_order, 
-                order_status_id = request.POST.get("change_status_"+id_order),
-                created_date = timezone.now(),
-                created_by = request.user
-            )
+            change_status(request)
         else: # show_details
             order = get_object_or_404(Order, pk=id_order)
             details = DetailOrder.objects.raw('''
@@ -179,7 +221,6 @@ def seller_get_order(request):
     sqlutils = SQLUtils()
     sqlutils.add_where('`m`.`id_user` = %s', str(request.user.id))
     sqlutils.add_where('`h`.`created_date` = `latest_status`.`max`')
-    sqlutils.add_order('`order`.`created_date` desc')
 
     # filter date
     if request.GET.get('date_begin'):
@@ -190,20 +231,25 @@ def seller_get_order(request):
     if request.GET.get('status'):
         sqlutils.add_where('`stt`.`code` = %s', request.GET.get('status'))
     # search order
-    if request.GET.get('order'):
-        sqlutils.add_where('`order`.`id` = %s', request.GET.get('order'))
+    if request.GET.get('search_order'):
+        # order_target = request.GET.get('order').split("-")[2]
+        sqlutils.add_where('cast(`order`.`id` as char(10)) LIKE "%%%s%%"', request.GET.get('search_order')) #còn lỗi
+    # sort order
+    if request.GET.get('sort'):
+        sqlutils.add_order('`order`.`created_date` '+ request.GET.get('sort'))
 
     order_select_clause = '''
         select `order`.`id`, `order`.`created_date`, `book`.`name`, sum(`d_o`.`total_price_after_discount`) `price`
             , `stt`.`name` `status`, `stt`.`code` `status_code` '''
 
     order = Order.objects.raw(
-        base_sql.format(select=order_select_clause, where=sqlutils.get_where_clause(), 
+        base_sql.format(select=order_select_clause, where=sqlutils.get_where_clause(),
                         group=' group by `order`.`id` ', order=sqlutils.get_order_clause()),
         sqlutils.get_params())
+    print(order)
 
     # paginator
-    paginator = Paginator(order, 5)
+    paginator = Paginator(order, 7)
     page_number = request.GET.get('page')
     pager = paginator.get_page(page_number)
     page_navigator = []
