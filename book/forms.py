@@ -146,3 +146,6 @@ class UpdateBookForm(forms.Form):
         merchandise.description = self.cleaned_data['description']
         merchandise.price = self.cleaned_data['price']
         merchandise.save()
+
+
+    

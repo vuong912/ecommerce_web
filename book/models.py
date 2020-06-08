@@ -181,7 +181,6 @@ class Merchandise(models.Model):
     def check_book_raw_query():
         return ['`merchandise_portfolio`.`code` = "book"']
 
-
 class MerchandiseDelivery(models.Model):
     merchandise = models.ForeignKey(Merchandise, models.DO_NOTHING, db_column='id_merchandise')
     delivery = models.ForeignKey(Delivery, models.DO_NOTHING, db_column='id_delivery')
