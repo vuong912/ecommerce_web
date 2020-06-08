@@ -31,7 +31,14 @@ def get_order(request):
                     AND `d_o`.`id_order` = %s
             ''',[str(id_order)])
             address = Address.objects.get(pk = order.address_id)
-            return render (request, 'order/order_detail.html', {'order':order, 'details':details, 'address':address})
+            # get detail order status
+            detail_order_status = HistoryOrderStatus.objects.raw('''
+                select `h`.*, `os`.`name`
+                from `history_order_status` `h` join `order_status` `os`
+                where `h`.`id_order_status` = `os`.`id` AND `h`.`id_order` = %s
+                order by `h`.`created_date` desc;
+            ''', [id_order])
+            return render (request, 'order/order_detail.html', {'order':order, 'details':details, 'address':address, 'detail_order_status':detail_order_status})
 
     # get order
     # get sort
@@ -172,6 +179,9 @@ def change_status(request):
     if id_status == 4:
         # gửi thông báo hủy kèm lý do
         send_notification_by_system(request.user, "Đơn hàng của bạn đã bị hủy với lý do "+note)
+    elif id_status == 2:
+        # gửi thông báo dời lại kèm lý do
+        send_notification_by_system(request.user, "Đơn hàng của bạn đã bị dời lại với lý do "+note)
     elif id_status == 3:
         # giảm số lượng trong merchandise và kiểm tra còn hàng 0 sau khi giao thành công
         detail_order = DetailOrder.objects.filter(order_id = id_order)
@@ -232,8 +242,9 @@ def seller_get_order(request):
         sqlutils.add_where('`stt`.`code` = %s', request.GET.get('status'))
     # search order
     if request.GET.get('search_order'):
+        search_order_id = request.GET.get('search_order').split("-")[-1]
         # order_target = request.GET.get('order').split("-")[2]
-        sqlutils.add_where('cast(`order`.`id` as char(10)) LIKE "%%%s%%"', request.GET.get('search_order')) #còn lỗi
+        sqlutils.add_where('`order`.`id` = %s', search_order_id)
     # sort order
     if request.GET.get('sort'):
         sqlutils.add_order('`order`.`created_date` '+ request.GET.get('sort'))
@@ -246,7 +257,7 @@ def seller_get_order(request):
         base_sql.format(select=order_select_clause, where=sqlutils.get_where_clause(),
                         group=' group by `order`.`id` ', order=sqlutils.get_order_clause()),
         sqlutils.get_params())
-    print(order)
+    print([i for i in order])
 
     # paginator
     paginator = Paginator(order, 7)
@@ -261,5 +272,9 @@ def seller_get_order(request):
 
     #get all status
     order_status = OrderStatus.objects.all()
+
+    # for item in order:
+    #     for i in range(item.status_code, len(order_status)):
+    #         print(i.code)
 
     return render(request, 'seller/order_list.html', {'pager':pager, 'page_navigator': page_navigator, 'all_status':order_status, 'post_value':post_param})
