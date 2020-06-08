@@ -131,7 +131,7 @@
                                                 <span style="color: #ee4d2d; font-size: 1.2em;">-{{ book.get_saving_rate|floatformat:0 }}%</span></p>
                                             {% endif %}
                                         </div>
-                                        <p class="card-text">{{ book.description|truncatechars:100 }}</p>
+                                        <p class="card-text">{{ book.description|striptags|truncatechars:100 }}</p>
                                         <div class="product-ratings list-inline">
                                             <ul class="list-inline list-inline-item">
                                                 {% with t_star=book.rate_point|floatformat:0 %}
