@@ -123,14 +123,15 @@
                                             {% else %}
                                         <!--Nếu trạng thái là dời lại hay đang giao hàng thì 0 đc quay về tiếp nhận-->
                                                 {% for i in all_status %}
+                                                    {% if not i.code == "1" %}
                                                     <option value="{{i.code}}"
                                                         {% ifequal i.code item.status_code %} selected="selected" {% endifequal %} 
                                                     >{{i.name}}</option>
+                                                    {% endif %}
                                                 {% endfor %}
+                                            {% endifequal %}
                                             </select>
                                             <button id="submit_status_{{item.id}}" type="submit" hidden></button>
-                                            {% endifequal %}
-                                        {% endifequal %}
                                         {% endifequal %}
                                         {% endifequal %}
                                     </form>
