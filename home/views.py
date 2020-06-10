@@ -7,6 +7,7 @@ from common.utils import SQLUtils
 from book.views import SORT_SQL
 from book.services import MerchandiseRepo
 from order.services import count_status_order, get_product_income_rank
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def index(request):
     base_sql = '''
@@ -61,6 +62,7 @@ def index(request):
         sqlutils.get_params())[:10]
     return render(request, 'home/index.html', {'hotest_merchandises':hotest_merchandises, 'newest_merchandises':newest_merchandises})
 
+@login_required
 def seller_dashboard(request):
     merchandise_counter = dict({'rejected': 0, 'pending': 0, 'blocked': 0, 'sold_out': 0, 'stopping': 0, 'selling': 0})
     total_merchandise = 0

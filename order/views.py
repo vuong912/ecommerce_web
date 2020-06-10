@@ -4,14 +4,15 @@ from cart.models import Cart
 from book.models import Merchandise
 from users.models import Address
 from review.models import AllowedReviewTimes
-from common.utils import SQLUtils, get_object_or_none
+from common.utils import SQLUtils, get_object_or_none, ajax_login_required
 from notification.services import send_notification_by_system
 from .forms import NewAddressForm
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import transaction, DatabaseError
-
+from .services import get_profit_of_user
+from django.http import JsonResponse
 # Create your views here.
 @login_required
 def get_order(request):
@@ -278,3 +279,12 @@ def seller_get_order(request):
     #         print(i.code)
 
     return render(request, 'seller/order_list.html', {'pager':pager, 'page_navigator': page_navigator, 'all_status':order_status, 'post_value':post_param})
+
+
+@ajax_login_required
+def get_profit_data(request):
+    profit_data = get_profit_of_user(request.user.id)#, order_status=3)
+    response_profit_data = []
+    for data in profit_data:
+        response_profit_data.append({'x': data.id, 'y': int(data.profit)})
+    return JsonResponse({'data': response_profit_data}, status=200)
