@@ -6,7 +6,7 @@ from store.models import Store
 from common.utils import SQLUtils
 from book.views import SORT_SQL
 from book.services import MerchandiseRepo
-from order.services import count_status_order, get_product_income_rank
+from order.services import count_status_order, get_product_income_rank, get_profit_of_user
 from django.core.paginator import Paginator
 # Create your views here.
 def index(request):
