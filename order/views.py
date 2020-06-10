@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.db import transaction, DatabaseError
 from .services import get_profit_of_user
 from django.http import JsonResponse
+import datetime
 # Create your views here.
 @login_required
 def get_order(request):
@@ -284,8 +285,16 @@ def seller_get_order(request):
 
 @ajax_login_required
 def get_profit_data(request):
-    profit_data = get_profit_of_user(request.user.id)#, order_status=3)
+    if request.GET.get('date_from'):
+        date_begin = datetime.datetime.strptime(request.GET.get('date_from'), '%Y-%m-%d')
+    else:
+        date_begin = None
+    if request.GET.get('date_to'):
+        date_end = datetime.datetime.strptime(request.GET.get('date_to'), '%Y-%m-%d')
+    else:
+        date_end = None
+    profit_data = get_profit_of_user(request.user.id, order_status=3, filter_date_begin=date_begin, filter_date_end=date_end)
     response_profit_data = []
     for data in profit_data:
-        response_profit_data.append({'x': data.id, 'y': int(data.profit)})
+        response_profit_data.append({'date': data.id, 'profit': data.total_price_after_discount})
     return JsonResponse({'data': response_profit_data}, status=200)
