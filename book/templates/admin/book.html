@@ -1,0 +1,10 @@
+{% extends 'admin/change_form.html' %}
+
+{% block submit_buttons_bottom %}
+    {{ original.is_selling }}
+    <!--{{ block.super }}-->
+    <div class="submit-row">
+        
+        <input type="submit" value="Make Unique" name="_make-unique">
+    </div>
+{% endblock %}
