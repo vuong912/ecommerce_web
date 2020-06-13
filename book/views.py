@@ -136,7 +136,7 @@ def get_my_merchandises(request):
         is_book=True, merchandise_status=merchandise_status, is_opening_store=True,
         category=request.GET.get('category'), author=request.GET.get('author'), location=request.GET.get('location'),
         condition=request.GET.get('condition'), low_price=request.GET.get('low_price'),
-        high_price=request.GET.get('high_price'), sort=request.GET.get('sort'), owner=request.user.pk)
+        high_price=request.GET.get('high_price'), search_product=request.GET.get('search_product'), sort=request.GET.get('sort'), owner=request.user.pk)
 
     merchandises = merchandise_repo.get_merchandises()
 
