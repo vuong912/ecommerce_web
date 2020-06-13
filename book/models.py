@@ -49,6 +49,8 @@ class BookCategory(models.Model):
     def is_leaf(self):
         return not self.bookcategory_set.all().exists()
 
+    def __str__(self):
+        return self.name
 
 class BookCategoryDetail(models.Model):
     book = models.ForeignKey(Book, models.DO_NOTHING, db_column='id_book')
