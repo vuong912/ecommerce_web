@@ -52,16 +52,45 @@
                                   </div>
                               </td>
                               <td>
-                                  <h5>{{ item.price }}</h5>
+                                  <h5>{{ item.price|floatformat:0|intcomma }}</h5>
                               </td>
                               <td>
-                                  <div class="product_count">
-                                      <input type="text" name="qty" id="sst-{{item.id}}" maxlength="12" value="{{ item.quantity }}" title="Quantity:"
-                                          class="input-text qty" onchange="update_quantity(this.value, {{item.id}})">
-                                      <button onclick="var result = document.getElementById('sst-{{item.id}}'); var sst = result.value; if( !isNaN( sst )) update_quantity(++result.value,{{item.id}});return false;"
-                                          class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
-                                      <button onclick="var result = document.getElementById('sst-{{item.id}}'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 1 ) update_quantity(--result.value,{{item.id}});return false;"
-                                          class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                  <div class="product_count" id="product_count">
+                                    {% if item.blocked_date or item.stopped_date or not item.activated_date %}
+                                        <!--Stop selling-->
+                                        <p> Ngừng kinh doanh </p>
+                                    {% elif item.quantity_exists == 0 %}
+                                        <!--Out of stock-->
+                                        <p> Hết hàng </p>
+                                    {% else %}
+                                        <!--Select quantity-->
+                                        <form method="post" >
+                                        {% csrf_token %}
+                                            <input type="text" name="id_cart" value="{{item.id}}" hidden>
+                                            <input type="text" name="qty" id="sst-{{item.id}}" maxlength="12" value="{{ item.quantity }}" title="Quantity:"
+                                                class="input-text qty" onchange="update_quantity({{item.id}})">
+                                            <button name="increase_qty" onclick="
+                                                                var result = document.getElementById('sst-{{item.id}}'); 
+                                                                var sst = result.value; 
+                                                                if( !isNaN( sst )) {
+                                                                    result.value++;
+                                                                    update_quantity({{item.id}})
+                                                                }
+                                                                return false;"
+                                                class="increase items-count" type="button"><i class="lnr lnr-chevron-up"></i></button>
+                                            <button name="decrease_qty" onclick="
+                                                                var result = document.getElementById('sst-{{item.id}}'); 
+                                                                var sst = result.value; 
+                                                                if( !isNaN( sst ) &amp;&amp; sst > 0 ) {
+                                                                    result.value--; 
+                                                                    update_quantity({{item.id}})
+                                                                }
+                                                                return false;"
+                                                class="reduced items-count" type="button"><i class="lnr lnr-chevron-down"></i></button>
+                                            <button name="submit" type="submit" id="submit_{{item.id}}"></button>
+
+                                          </form>
+                                    {%endif%}
                                   </div>
                               </td>
                               <td>
@@ -95,7 +124,7 @@
                                   <!--Modal end-->
                               </td>
                               <td>
-                                  <h5>{% widthratio item.price 1 item.quantity %}</h5>
+                                  <h5>{{ item.total_price|floatformat:0|intcomma }}</h5>
                               </td>
                               <td>
                                   <div class="delete-cart-icon"> 
@@ -118,7 +147,7 @@
                                   <h5>Thành tiền</h5>
                               </td>
                               <td>
-                                  <h5>{{ sub_total }}</h5>
+                                  <h5>{{ sub_total|floatformat:0|intcomma }}</h5>
                               </td>
                           </tr>
                           <tr class="out_button_area">
@@ -133,8 +162,14 @@
                               </td>
                               <td>
                                   <div class="checkout_btn_inner d-flex align-items-center">
-                                      <a class="gray_btn" href="{% url 'home:index' %}">Tiếp tục mua sắm</a>
-                                      <a class="primary2-btn ml-2" href="{% url 'order:check_out' %}">Đặt hàng</a>
+                                        <a class="gray_btn" href="{% url 'home:index' %}">Tiếp tục mua sắm</a>
+                                        {% if stopped_selling %}
+                                            <a class="primary2-btn ml-2" onclick="$.notify('Xóa các sản phẩm ngừng kinh doanh hoặc hết hàng để tiếp tục','error');">Đặt hàng</a>
+                                        {% elif cart_items %}
+                                            <a class="primary2-btn ml-2" href="{% url 'order:check_out' %}">Đặt hàng</a>
+                                        {% else %}
+                                            <a class="primary2-btn ml-2" onclick="$.notify('Giỏ hàng trống','warn');">Đặt hàng</a>
+                                        {%endif%}
                                   </div>
                               </td>
                           </tr>
@@ -149,19 +184,9 @@
 
 {% block js %}
 <script>
-    function update_quantity(quantity, cart_id){
+    function update_quantity(cart_id){
         console.log("running update_quantity()");
-        /*$.ajax({
-            'url': '', 
-            'type': 'GET',
-            'dataType': 'json', 
-            'data': {cart_id:cart_id, quantity:quantity}, 
-            'success': function(data) {
-                console.log("Ajax success");
-            },
-            'error': function(data) {console.log("Ajax error");}
-        });*/
-        window.location = window.location.href.split("cart/",1) + "cart/cart_id=" + cart_id + "&quantity=" + quantity;
+        document.getElementById("submit_"+cart_id).click()
     }
 </script>
 {% endblock %}

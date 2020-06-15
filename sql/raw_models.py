@@ -69,6 +69,7 @@ class Store(models.Model):
 ### BOOK
 class Book(models.Model):
     name = models.CharField(max_length=256)
+    author = models.CharField(max_length=256)
     publisher = models.CharField(max_length=256)
     publication_date = models.DateField()
     width = models.SmallIntegerField()
@@ -302,6 +303,7 @@ class Report(models.Model):
     id_object = models.IntegerField()
     id_sample_report = models.ForeignKey('SampleReport', models.DO_NOTHING, db_column='id_sample_report')
     user_description = models.CharField(max_length=512, blank=True, null=True)
+    negative_point = models.IntegerField()
     created_date = models.DateTimeField()
     created_by = models.ForeignKey('User', models.DO_NOTHING, db_column='created_by')
 
@@ -319,6 +321,7 @@ class ReportTarget(models.Model):
 class SampleReport(models.Model):
     id_report_target = models.ForeignKey(ReportTarget, models.DO_NOTHING, db_column='id_report_target')
     sample_content = models.CharField(max_length=256)
+    negative_point = models.IntegerField()
     created_date = models.DateTimeField()
     created_by = models.ForeignKey('User', models.DO_NOTHING, db_column='created_by')
     delete_date = models.DateTimeField(blank=True, null=True)

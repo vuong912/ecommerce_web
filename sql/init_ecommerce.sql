@@ -78,6 +78,7 @@ CREATE TABLE `book` (
     `id` INT AUTO_INCREMENT,
     #`id_category` INT NOT NULL,
     `name` VARCHAR(256) NOT NULL,
+    `author` VARCHAR(256),
     `publisher` VARCHAR(256) NOT NULL,
     `publication_date` DATE NOT NULL,
     `width` SMALLINT NOT NULL,
@@ -85,6 +86,7 @@ CREATE TABLE `book` (
     `length` SMALLINT NOT NULL,
     `pages_num` SMALLINT NOT NULL,
     PRIMARY KEY(`id`),
+    KEY (`author`),
     #KEY(`id_category`),
     #CONSTRAINT `fk_book_bookcategory` FOREIGN KEY (`id_category`) REFERENCES `book_category` (`id`),
     CHECK (`width` > 0 AND `height` > 0 AND `length` > 0 AND `pages_num` > 0) 
@@ -351,7 +353,6 @@ CREATE TABLE `history_order_status` (
     `created_date` DATETIME NOT NULL,
     `created_by` INT NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE (`id_order` , `id_order_status`),
     CONSTRAINT `fk_historyorderstatus_order` FOREIGN KEY (`id_order`) REFERENCES `order` (`id`),
     CONSTRAINT `fk_historyorderstatus_orderstatus` FOREIGN KEY (`id_order_status`) REFERENCES `order_status` (`id`),
     CONSTRAINT `fk_crehistoryorderstatus` FOREIGN KEY (`created_by`) REFERENCES `user` (`id`)
@@ -385,6 +386,7 @@ CREATE TABLE `sample_report` (
     `id` INT AUTO_INCREMENT,
     `id_report_target` INT NOT NULL,
     `sample_content` VARCHAR(256) NOT NULL,
+    `negative_point` INT NOT NULL,
     
     `created_date` DATETIME NOT NULL,
     `created_by` INT NOT NULL,
@@ -400,6 +402,7 @@ CREATE TABLE `report` (
     `id_object` INT NOT NULL,
     `id_sample_report` INT NOT NULL,
     `user_description` VARCHAR(512),
+    `negative_point` INT NOT NULL,
     
     `created_date` DATETIME NOT NULL,
     `created_by` INT NOT NULL,

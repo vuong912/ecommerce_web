@@ -48,10 +48,20 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
     <style>
-        .errorlist>li {
+        .errorlist>li, .error-text {
             color: rgb(207, 29, 29);
             font-size: 0.7em;
         }
+        .already-read{
+            background-color: #fafafa;
+        }
+        .full-size-select{
+            width: 100%;
+        }
+        .full-size-select > .list{
+            width: 100%;
+        }
+        .pointer {cursor: pointer;}
     </style>
 </head>
 
@@ -75,40 +85,32 @@
                         <!-- footer logo -->
                         <img src="{% static 'images/LG-f.png' %}" alt="">
                         <!-- description -->
-                        <p class="alt-color">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                            tempor
-                            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                            exercitation ullamco
-                            laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p class="alt-color">Bookmarket là trang web mua bán sách nhanh nhất và là nhà phân phối
+                            của nhiều nhà sách hàng đầu Việt Nam như NXB Trẻ, NXB Kim Đồng, Nhã Nam, Alphabooks,...
+                            với số lượng đầu sách đồ sộ được cập nhật hằng ngày.</p>
                     </div>
                 </div>
                 <!-- Link list -->
                 <div class="col-lg-2 offset-lg-1 col-md-3">
                     <div class="block">
-                        <h4>Site Pages</h4>
+                        <h4>Trang liên kết</h4>
                         <ul>
-                            <li><a href="#">Boston</a></li>
-                            <li><a href="#">How It works</a></li>
-                            <li><a href="#">Deals & Coupons</a></li>
-                            <li><a href="#">Articls & Tips</a></li>
-                            <li><a href="terms-condition.html">Terms & Conditions</a></li>
+                            <li><a href="{% url 'home:index'%}">Trang chủ</a></li>
+                            <li><a href="{% url 'book:get_books'%}?category=English-Books-524">Sách Nước Ngoài</a></li>
+                            <li><a href="{% url 'book:get_books'%}?category=Sach-tieng-Viet-791">Sách Tiếng Việt</a></li>
+                            <li><a href="#">Điều khoản & Chính sách</a></li>
                         </ul>
                     </div>
                 </div>
                 <!-- Link list -->
                 <div class="col-lg-2 col-md-3 offset-md-1 offset-lg-0">
                     <div class="block">
-                        <h4>Admin Pages</h4>
+                        <h4>Tài khoản</h4>
                         <ul>
-                            <li><a href="category.html">Category</a></li>
-                            <li><a href="single.html">Single Page</a></li>
-                            <li><a href="store.html">Store Single</a></li>
-                            <li><a href="single-blog.html">Single Post</a>
-                            </li>
-                            <li><a href="blog.html">Blog</a></li>
-
-
-
+                            <li><a href="{% url 'user:info' %}">Trang cá nhân</a></li>
+                            <li><a href="{% url 'user:info' %}">Giỏ hàng</a></li>
+                            <li><a href="{% url 'cart:get_cart' %}">Đơn hàng của tôi</a></li>
+                            <li><a href="{% url 'user:logout' %}">Đăng xuất</a></li>
                         </ul>
                     </div>
                 </div>
@@ -121,7 +123,7 @@
                                 <!-- Icon -->
                                 <img src="{% static 'images/footer/phone-icon.png' %}" alt="mobile-icon">
                             </a>
-                            <p>Get the Dealsy Mobile App and Save more</p>
+                            <p>Tải ứng dụng trên điện thoại</p>
                         </div>
                         <div class="download-btn d-flex my-3">
                             <a href="#"><img src="{% static 'images/apps/google-play-store.png' %}" class="img-fluid"
@@ -143,11 +145,10 @@
                 <div class="col-sm-6 col-12">
                     <!-- Copyright -->
                     <div class="copyright">
-                        <p>Copyright © <script>
+                        <p>© <script>
                                 var CurrentYear = new Date().getFullYear()
                                 document.write(CurrentYear)
-                            </script>. All Rights Reserved, theme by <a class="text-primary"
-                                href="https://themefisher.com" target="_blank">themefisher.com</a></p>
+                            </script> Bản quyền của Công ty cổ phần Chợ Sách</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-12">
@@ -188,6 +189,8 @@
     </script>
     <script src="{% static 'plugins/google-map/gmap.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
+    <!-- Notification -->
+    <script src="{% static 'js/notify.js' %}"></script>
     {% block js %}
     {% endblock %}
 </body>
